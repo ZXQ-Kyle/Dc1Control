@@ -2,6 +2,9 @@ package info.ponyo.dc1control.bean;
 
 import java.util.ArrayList;
 
+/**
+ * @author zxq
+ */
 public class Dc1Bean {
     /**
      * 唯一id
@@ -77,7 +80,7 @@ public class Dc1Bean {
     }
 
     public ArrayList<String> getNames() {
-        return names;
+        return names == null ? new ArrayList<>(5) : names;
     }
 
     public Dc1Bean setNames(ArrayList<String> names) {

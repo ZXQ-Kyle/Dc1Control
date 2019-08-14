@@ -53,8 +53,9 @@ public class SettingDialog extends AppCompatDialogFragment {
         if (dialog != null) {
             DisplayMetrics dm = new DisplayMetrics();
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-            dialog.getWindow().setLayout((int) (dm.widthPixels * 0.75), ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setLayout((int) (dm.widthPixels * 0.85), ViewGroup.LayoutParams.WRAP_CONTENT);
         }
+        mEtHost.setText(SpManager.getString(Const.KEY_HOST, "192.168.1.1") + ":" + SpManager.getInt(Const.KEY_PORT, 8800));
         mBtnCancel.setOnClickListener(v -> dismiss());
         mBtnConfirm.setOnClickListener(v -> {
             String trim = mEtHost.getText().toString().trim();
@@ -74,7 +75,7 @@ public class SettingDialog extends AppCompatDialogFragment {
                     mEtHost.setError("输入格式错误");
                     return;
                 }
-            }else {
+            } else {
                 mEtHost.setError("输入格式错误");
                 return;
             }

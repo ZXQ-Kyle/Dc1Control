@@ -2,6 +2,8 @@ package info.ponyo.dc1control.base;
 
 import android.app.Application;
 
+import info.ponyo.dc1control.util.SpManager;
+
 
 /**
  * @author zxq
@@ -13,5 +15,6 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         registerActivityLifecycleCallbacks(new info.ponyo.dc1control.base.ActivityLifecycleCallbacks());
+        SpManager.initInstance(this);
     }
 }

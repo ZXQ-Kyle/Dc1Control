@@ -6,4 +6,12 @@ package info.ponyo.dc1control.util;
  * @Description:
  */
 public class Const {
+    /**
+     * 服务器地址
+     */
+    public static final String KEY_HOST = "00";
+    /**
+     * 服务器端口
+     */
+    public static final String KEY_PORT = "01";
 }

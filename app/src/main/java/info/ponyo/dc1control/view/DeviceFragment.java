@@ -12,6 +12,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
@@ -56,7 +59,26 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.rv);
         srl = view.findViewById(R.id.srl);
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        setHasOptionsMenu(true);
         initView();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_setting, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        new SettingDialog().show(getActivity().getSupportFragmentManager(), "SettingDialog");
+        return true;
     }
 
     private void initView() {

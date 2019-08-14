@@ -18,7 +18,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
  */
 
 public class Connection {
-    private final static Connection connection = new Connection();
+    private static Connection connection = new Connection();
 
     private Connection() {
         sendMessageScheduleThread = new ScheduledThreadPoolExecutor(1,

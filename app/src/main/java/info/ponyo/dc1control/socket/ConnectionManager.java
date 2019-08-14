@@ -13,6 +13,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import info.ponyo.dc1control.bean.Dc1Bean;
+import info.ponyo.dc1control.util.Const;
+import info.ponyo.dc1control.util.SpManager;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -83,7 +85,9 @@ public class ConnectionManager {
         if (conn.isActive()) {
             return;
         }
-        ChannelFuture channelFuture = b.connect("122.112.246.230", 40079);
+        String host = SpManager.getString(Const.KEY_HOST, "192.168.1.1");
+        int port = SpManager.getInt(Const.KEY_PORT, 8800);
+        ChannelFuture channelFuture = b.connect(host, port);
 //        ChannelFuture channelFuture = b.connect("192.168.50.50", 8800);
         // 添加连接监听
         channelFuture.addListener((ChannelFuture future) -> {
@@ -92,6 +96,15 @@ public class ConnectionManager {
             }
             Log.i("ConnectionManager", "connect(ConnectionManager.java:92)" + future.isSuccess());
         });
+    }
+
+    /**
+     * 重置连接，断开服务器并连接
+     */
+    public void reset() {
+        Connection.getInstance().close();
+        connectCount.set(0);
+        start();
     }
 
     private class NewChannelInitializer extends ChannelInitializer<Channel> {

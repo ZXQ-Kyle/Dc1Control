@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.util.Consumer;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatEditText;
@@ -29,6 +30,7 @@ public class SettingDialog extends AppCompatDialogFragment {
     private AppCompatEditText mEtHost;
     private AppCompatButton mBtnConfirm;
     private AppCompatButton mBtnCancel;
+    private Consumer mOnConfirmClickListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -80,7 +82,15 @@ public class SettingDialog extends AppCompatDialogFragment {
                 return;
             }
             ConnectionManager.getInstance().reset();
+            if (mOnConfirmClickListener != null) {
+                mOnConfirmClickListener.accept(null);
+            }
             dismiss();
         });
+    }
+
+    public DialogFragment setOnConfirmClickListener(Consumer consumer) {
+        mOnConfirmClickListener = consumer;
+        return this;
     }
 }

@@ -76,7 +76,12 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        new SettingDialog().show(getActivity().getSupportFragmentManager(), "SettingDialog");
+        new SettingDialog()
+                .setOnConfirmClickListener(o -> {
+                    mAdapter.setData(null);
+                    ConnectApi.queryDc1List();
+                })
+                .show(getActivity().getSupportFragmentManager(), "SettingDialog");
         return true;
     }
 

@@ -168,13 +168,12 @@ public class ConnectionManager {
             threadPool.execute(() -> {
                 Type type = new TypeToken<ArrayList<Dc1Bean>>() {
                 }.getType();
-                Log.i("TcpClientHandler", "dispatchMsg(TcpClientHandler.java:157)" + msg);
                 if (!msg.startsWith("[")) {
                     return;
                 }
                 ArrayList<Dc1Bean> dc1BeanArrayList = gson.fromJson(msg, type);
                 if (mListener != null) {
-                    Log.i("TcpClientHandler", "dispatchMsg(TcpClientHandler.java:148)" + dc1BeanArrayList);
+                    Log.i("TcpClientHandler", "dispatchMsg(TcpClientHandler.java:177)" + dc1BeanArrayList);
                     mListener.onReceive(dc1BeanArrayList);
                 }
             });

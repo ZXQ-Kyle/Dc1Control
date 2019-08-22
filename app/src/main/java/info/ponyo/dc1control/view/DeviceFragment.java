@@ -90,6 +90,7 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
 
     private void initView() {
         srl.setOnRefreshListener(() -> {
+            mAdapter.setData(null);
             ConnectApi.queryDc1List();
             srl.postDelayed(() -> srl.setRefreshing(false), 500);
         });
@@ -100,7 +101,7 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
         ConnectionManager.getInstance().setListener(dc1Beans -> {
             getActivity().runOnUiThread(() -> mAdapter.setData(dc1Beans));
         });
-        ConnectApi.queryDc1List();
+        recyclerView.post(ConnectApi::queryDc1List);
     }
 
     @Override

@@ -131,6 +131,10 @@ public class Dc1Bean {
                 ", V=" + V +
                 ", P=" + P +
                 ", updateTime=" + updateTime +
+                ", online=" + online +
+                ", powerStartTime=" + powerStartTime +
+                ", totalPower=" + totalPower +
+                ", names=" + names +
                 '}';
     }
 }

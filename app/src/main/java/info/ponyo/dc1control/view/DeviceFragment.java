@@ -20,7 +20,10 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import info.ponyo.dc1control.R;
 import info.ponyo.dc1control.base.CommonAdapter;
@@ -79,7 +82,7 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
         new SettingDialog()
                 .setOnConfirmClickListener(o -> {
                     mAdapter.setData(null);
-                    ConnectApi.queryDc1List();
+                    recyclerView.postDelayed(ConnectApi::queryDc1List, 100);
                 })
                 .show(getActivity().getSupportFragmentManager(), "SettingDialog");
         return true;
@@ -108,45 +111,70 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
     @Override
     public void onItemChildClick(CommonAdapter adapter, CommonViewHolder holder, int viewId, int position) {
         Dc1Bean dc1Bean = mAdapter.getData().get(position);
-        View view = View.inflate(getContext(), R.layout.view_edit_name, null);
-        EditText etSwitch = view.findViewById(R.id.et_switch);
-        EditText etSwitch1 = view.findViewById(R.id.et_switch_1);
-        EditText etSwitch2 = view.findViewById(R.id.et_switch_2);
-        EditText etSwitch3 = view.findViewById(R.id.et_switch_3);
-        EditText etSwitch4 = view.findViewById(R.id.et_switch_4);
+        if (viewId == R.id.tv_power_info) {
+            showResetPowerDialog(dc1Bean);
+        } else {
+            View view = View.inflate(getContext(), R.layout.view_edit_name, null);
+            EditText etSwitch = view.findViewById(R.id.et_switch);
+            EditText etSwitch1 = view.findViewById(R.id.et_switch_1);
+            EditText etSwitch2 = view.findViewById(R.id.et_switch_2);
+            EditText etSwitch3 = view.findViewById(R.id.et_switch_3);
+            EditText etSwitch4 = view.findViewById(R.id.et_switch_4);
 
-        ArrayList<String> names = dc1Bean.getNames();
-        if (names != null && names.size() == 5) {
-            etSwitch.setText(names.get(0));
-            etSwitch1.setText(names.get(1));
-            etSwitch2.setText(names.get(2));
-            etSwitch3.setText(names.get(3));
-            etSwitch4.setText(names.get(4));
+            ArrayList<String> names = dc1Bean.getNames();
+            if (names != null && names.size() == 5) {
+                etSwitch.setText(names.get(0));
+                etSwitch1.setText(names.get(1));
+                etSwitch2.setText(names.get(2));
+                etSwitch3.setText(names.get(3));
+                etSwitch4.setText(names.get(4));
+            }
+
+            new AlertDialog.Builder(getContext())
+                    .setCancelable(false)
+                    .setTitle("设置名称")
+                    .setView(view)
+                    .setPositiveButton("确定", (dialog, which) -> {
+                        names.clear();
+                        names.add(etSwitch.getText().toString().trim());
+                        names.add(etSwitch1.getText().toString().trim());
+                        names.add(etSwitch2.getText().toString().trim());
+                        names.add(etSwitch3.getText().toString().trim());
+                        names.add(etSwitch4.getText().toString().trim());
+                        mAdapter.notifyItemChanged(position);
+                        ConnectApi.updateDc1Name(dc1Bean.getId(), names);
+                        dialog.dismiss();
+                    })
+                    .setPositiveButtonIcon(getResources().getDrawable(R.drawable.ic_confirm))
+                    .setNegativeButton("取消", (dialog1, which) -> {
+                        dialog1.dismiss();
+                    })
+                    .setNegativeButtonIcon(getResources().getDrawable(R.drawable.ic_cancel))
+                    .create()
+                    .show();
         }
+    }
 
+    private void showResetPowerDialog(Dc1Bean dc1Bean) {
         new AlertDialog.Builder(getContext())
-                .setCancelable(false)
-                .setTitle("设置名称")
-                .setView(view)
-                .setPositiveButton("确定", (dialog, which) -> {
-                    names.clear();
-                    names.add(etSwitch.getText().toString().trim());
-                    names.add(etSwitch1.getText().toString().trim());
-                    names.add(etSwitch2.getText().toString().trim());
-                    names.add(etSwitch3.getText().toString().trim());
-                    names.add(etSwitch4.getText().toString().trim());
-                    mAdapter.notifyItemChanged(position);
-                    ConnectApi.updateDc1Name(dc1Bean.getId(), names);
+                .setIcon(R.drawable.ic_setting)
+                .setTitle("提示")
+                .setMessage("用电量每增加50kwh更新数据,点击重置重新计算")
+                .setCancelable(true)
+                .setPositiveButton("重置", (dialog, which) -> {
+                    ConnectApi.resetPower(dc1Bean.getId());
+                })
+                .setPositiveButtonIcon(getResources().getDrawable(R.drawable.ic_confirm))
+                .setNegativeButton("取消", (dialog, which) -> {
                     dialog.dismiss();
                 })
-                .setNegativeButton("取消", (dialog1, which) -> {
-                    dialog1.dismiss();
-                })
-                .create()
+                .setNegativeButtonIcon(getResources().getDrawable(R.drawable.ic_cancel))
                 .show();
     }
 
     private static class RvAdapter extends CommonAdapter<Dc1Bean> {
+
+        private SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
 
         @Override
         public int initLayoutId() {
@@ -156,9 +184,21 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
         @Override
         public void onBind(CommonViewHolder holder, int position) {
             Dc1Bean bean = getData().get(position);
-            holder.setText(R.id.tv_info, String.format("电压:%d  电流:%d  功率:%d", bean.getV(), bean.getI(), bean.getP()))
-                    .setOnItemChildClickListener(R.id.iv_edit);
 
+            holder.setText(R.id.tv_info, String.format("电压:%d  电流:%d  功率:%d", bean.getV(), bean.getI(), bean.getP()))
+                    .setOnItemChildClickListener(R.id.iv_edit)
+                    .setOnItemChildClickListener(R.id.tv_power_info);
+            //用电量显示
+            if (bean.getPowerStartTime() == 0) {
+                holder.setVisibility(R.id.tv_power_info, View.GONE);
+            } else {
+                String powerInfo = String.format(Locale.getDefault(),
+                        "从%s至今用电量为%dkwh",
+                        sdf.format(new Date(bean.getPowerStartTime())),
+                        bean.getTotalPower());
+                holder.setText(R.id.tv_power_info, powerInfo);
+            }
+            //开关名称及状态
             ArrayList<String> names = bean.getNames();
             if (names != null && names.size() == 5) {
                 holder.setText(R.id.tv_name, TextUtils.isEmpty(names.get(0)) ? "插排" : names.get(0))

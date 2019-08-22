@@ -9,16 +9,23 @@ public class Dc1Bean {
     /**
      * 唯一id
      */
-    public String id;
+    private String id;
     /**
      * 实际状态
      * 1111
      */
-    public String status;
-    public int I;
-    public int V;
-    public int P;
+    private String status;
+    private int I;
+    private int V;
+    private int P;
     private long updateTime;
+    private boolean online;
+
+    /**
+     * 开始计算用电量的起始时间
+     */
+    private long powerStartTime;
+    private long totalPower;
 
     /**
      * 插排名称，1-4开关名称
@@ -85,6 +92,33 @@ public class Dc1Bean {
 
     public Dc1Bean setNames(ArrayList<String> names) {
         this.names = names;
+        return this;
+    }
+
+    public boolean isOnline() {
+        return online;
+    }
+
+    public Dc1Bean setOnline(boolean online) {
+        this.online = online;
+        return this;
+    }
+
+    public long getPowerStartTime() {
+        return powerStartTime;
+    }
+
+    public Dc1Bean setPowerStartTime(long powerStartTime) {
+        this.powerStartTime = powerStartTime;
+        return this;
+    }
+
+    public long getTotalPower() {
+        return totalPower;
+    }
+
+    public Dc1Bean setTotalPower(long totalPower) {
+        this.totalPower = totalPower;
         return this;
     }
 

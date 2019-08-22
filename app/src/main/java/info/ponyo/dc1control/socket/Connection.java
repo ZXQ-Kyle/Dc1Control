@@ -53,7 +53,7 @@ public class Connection {
 
     // 发送心跳
     public void appendIdleMessage() {
-        appendMsgToQueue("-");
+        appendMsgToQueue("query");
     }
 
     // 定时任务发送消息给服务器端

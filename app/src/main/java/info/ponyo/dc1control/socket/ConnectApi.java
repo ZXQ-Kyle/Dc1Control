@@ -24,4 +24,8 @@ public class ConnectApi {
     public static void updateDc1Name(String id, ArrayList names) {
         Connection.getInstance().appendMsgToQueue("changeName id=" + id + " names=" + gson.toJson(names));
     }
+
+    public static void resetPower(String id) {
+        Connection.getInstance().appendMsgToQueue("resetPower id=" + id);
+    }
 }

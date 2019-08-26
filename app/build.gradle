@@ -1,13 +1,23 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    signingConfigs {
+        config {
+            storeFile file("key.jks")
+            storePassword "GIjPtfNe4aP6qkhJ"
+            keyAlias "master"
+            keyPassword "GIjPtfNe4aP6qkhJ"
+        }
+    }
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "info.ponyo.dc1control"
         minSdkVersion 18
         targetSdkVersion 28
         versionCode 3
-        versionName "1.2"
+        versionName "1.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -23,6 +33,12 @@ android {
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
     }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "dc1control_v${defaultConfig.versionName}.apk"
+        }
+    }
 }
 
 dependencies {
@@ -33,6 +49,7 @@ dependencies {
     implementation 'com.android.support:support-vector-drawable:28.0.0'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'io.netty:netty-all:4.1.38.Final'
+    implementation 'com.tencent.bugly:crashreport_upgrade:1.4.1'
 
     implementation 'com.android.support:support-v4:28.0.0'
     testImplementation 'junit:junit:4.12'

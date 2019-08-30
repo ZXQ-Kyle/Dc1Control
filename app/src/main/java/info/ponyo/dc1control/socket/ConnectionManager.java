@@ -4,7 +4,10 @@ package info.ponyo.dc1control.socket;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -13,7 +16,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import info.ponyo.dc1control.bean.Dc1Bean;
+import info.ponyo.dc1control.bean.PlanBean;
 import info.ponyo.dc1control.util.Const;
+import info.ponyo.dc1control.util.Event;
 import info.ponyo.dc1control.util.SpManager;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -40,13 +45,6 @@ public class ConnectionManager {
     private ExecutorService threadPool;
     private final Connection conn = Connection.getInstance();
     private Bootstrap b;
-
-    private OnReceiveData mListener;
-
-    public ConnectionManager setListener(OnReceiveData listener) {
-        this.mListener = listener;
-        return this;
-    }
 
     public static ConnectionManager getInstance() {
         return connectionManager;
@@ -88,7 +86,6 @@ public class ConnectionManager {
         String host = SpManager.getString(Const.KEY_HOST, "192.168.1.1");
         int port = SpManager.getInt(Const.KEY_PORT, 8800);
         ChannelFuture channelFuture = b.connect(host, port);
-//        ChannelFuture channelFuture = b.connect("192.168.50.50", 8800);
         // 添加连接监听
         channelFuture.addListener((ChannelFuture future) -> {
             if (!future.isSuccess()) {
@@ -124,6 +121,7 @@ public class ConnectionManager {
         // 读取服务端发来的消息
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
+            Log.i("TcpClientHandler", "channelRead0(TcpClientHandler.java:123)" + msg);
             dispatchMsg(conn, msg);
         }
 
@@ -166,16 +164,39 @@ public class ConnectionManager {
 
         private void dispatchMsg(Connection conn, String msg) {
             threadPool.execute(() -> {
-                Type type = new TypeToken<ArrayList<Dc1Bean>>() {
-                }.getType();
-                if (!msg.startsWith("[")) {
+                Log.i("------TcpClientHandler", "dispatchMsg(TcpClientHandler.java:166)" + msg.substring(0, Math.min(20, msg.length())) + "...------");
+                if (msg.startsWith("-")) {
                     return;
                 }
-                ArrayList<Dc1Bean> dc1BeanArrayList = gson.fromJson(msg, type);
-                if (mListener != null) {
-                    Log.i("TcpClientHandler", "dispatchMsg(TcpClientHandler.java:177)" + dc1BeanArrayList);
-                    mListener.onReceive(dc1BeanArrayList);
+                String[] split = msg.split(" ", 2);
+                if (split.length != 2) {
+                    return;
                 }
+                switch (split[0]) {
+                    case "queryDevice": {
+                        Type type = new TypeToken<ArrayList<Dc1Bean>>() {
+                        }.getType();
+                        ArrayList<Dc1Bean> dc1BeanArrayList = gson.fromJson(split[1], type);
+                        EventBus.getDefault().post(new Event().setCode(Event.CODE_DEVICE_LIST).setData(dc1BeanArrayList));
+                        break;
+                    }
+                    case "queryPlan": {
+                        Log.i("------" + System.currentTimeMillis(), "dispatchMsg(TcpClientHandler.java:182)" + split[1]);
+                        try {
+                            Type type = new TypeToken<ArrayList<PlanBean>>() {
+                            }.getType();
+                            ArrayList<PlanBean> planBeans = gson.fromJson(split[1], type);
+                            EventBus.getDefault().post(new Event().setCode(Event.CODE_PLAN_LIST).setData(planBeans));
+                        } catch (JsonSyntaxException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                    default: {
+                        break;
+                    }
+                }
+
             });
         }
     }

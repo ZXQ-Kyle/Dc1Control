@@ -1,4 +1,4 @@
-package info.ponyo.dc1control.view;
+package info.ponyo.dc1control.view.device;
 
 
 import android.os.Bundle;
@@ -17,7 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import info.ponyo.dc1control.R;
 import info.ponyo.dc1control.base.CommonAdapter;
@@ -25,7 +30,7 @@ import info.ponyo.dc1control.base.CommonViewHolder;
 import info.ponyo.dc1control.base.OnRecyclerViewItemClickListener;
 import info.ponyo.dc1control.bean.Dc1Bean;
 import info.ponyo.dc1control.socket.ConnectApi;
-import info.ponyo.dc1control.socket.ConnectionManager;
+import info.ponyo.dc1control.util.Event;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,6 +68,13 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
         super.onStart();
         setHasOptionsMenu(true);
         initView();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Override
@@ -84,7 +96,6 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
 
     private void initView() {
         srl.setOnRefreshListener(() -> {
-            mAdapter.setData(null);
             ConnectApi.queryDc1List();
             srl.postDelayed(() -> srl.setRefreshing(false), 500);
         });
@@ -92,10 +103,14 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
         mAdapter = new DeviceAdapter();
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
-        ConnectionManager.getInstance().setListener(dc1Beans -> {
-            getActivity().runOnUiThread(() -> mAdapter.setData(dc1Beans));
-        });
         recyclerView.post(ConnectApi::queryDc1List);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(Event event) {
+        if (Event.CODE_DEVICE_LIST.equals(event.getCode())) {
+            mAdapter.setData((List<Dc1Bean>) event.getData());
+        }
     }
 
     @Override
@@ -108,6 +123,8 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
         Dc1Bean dc1Bean = mAdapter.getData().get(position);
         if (viewId == R.id.tv_power_info) {
             showResetPowerDialog(dc1Bean);
+        } else if (viewId == R.id.iv_plan) {
+            EventBus.getDefault().post(new Event().setCode(Event.CODE_JUMP_TO_PLAN).setData(dc1Bean));
         } else {
             View view = View.inflate(getContext(), R.layout.view_edit_name, null);
             EditText etSwitch = view.findViewById(R.id.et_switch);

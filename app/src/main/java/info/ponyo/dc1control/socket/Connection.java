@@ -21,7 +21,7 @@ public class Connection {
     private static Connection connection = new Connection();
 
     private Connection() {
-        sendMessageScheduleThread = new ScheduledThreadPoolExecutor(1,
+        ScheduledExecutorService sendMessageScheduleThread = new ScheduledThreadPoolExecutor(1,
                 new DefaultThreadFactory("sendMessageScheduleThread"));
         sendMessageScheduleThread.scheduleWithFixedDelay(new SendTask(), 0, DEFAULT_TIME, TimeUnit.MILLISECONDS);
     }
@@ -35,13 +35,16 @@ public class Connection {
         this.channel = channel;
     }
 
-    //周期消息发送间隔时间（ms）
+    /**
+     * 周期消息发送间隔时间（ms）
+     */
     private final static int DEFAULT_TIME = 100;
     private Channel channel;
 
-    // 消息队列
+    /**
+     * 消息队列
+     */
     private final LinkedBlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
-    private static ScheduledExecutorService sendMessageScheduleThread;
 
     public void appendMsgToQueue(String msg) {
         try {
@@ -53,7 +56,7 @@ public class Connection {
 
     // 发送心跳
     public void appendIdleMessage() {
-        appendMsgToQueue("query");
+        appendMsgToQueue("-");
     }
 
     // 定时任务发送消息给服务器端

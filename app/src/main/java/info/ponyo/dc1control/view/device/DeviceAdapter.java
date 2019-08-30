@@ -1,4 +1,4 @@
-package info.ponyo.dc1control.view;
+package info.ponyo.dc1control.view.device;
 
 import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
@@ -36,6 +36,7 @@ public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
 
         holder.setText(R.id.tv_info, String.format("电压:%d  电流:%d  功率:%d", bean.getV(), bean.getI(), bean.getP()))
                 .setOnItemChildClickListener(R.id.iv_edit)
+                .setOnItemChildClickListener(R.id.iv_plan)
                 .setOnItemChildClickListener(R.id.tv_power_info);
         //用电量显示
         if (bean.getPowerStartTime() == 0) {

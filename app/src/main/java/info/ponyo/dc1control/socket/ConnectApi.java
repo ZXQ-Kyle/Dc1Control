@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
+import info.ponyo.dc1control.bean.PlanBean;
+
 /**
  * @author zxq
  * @Date 2019/8/2.
@@ -14,7 +16,11 @@ public class ConnectApi {
     private static Gson gson = new Gson();
 
     public static void queryDc1List() {
-        Connection.getInstance().appendMsgToQueue("query");
+        Connection.getInstance().appendMsgToQueue("queryDevice");
+    }
+
+    public static void queryPlanList(String deviceId) {
+        Connection.getInstance().appendMsgToQueue("queryPlan " + deviceId);
     }
 
     public static void switchDc1Status(String id, String status) {
@@ -27,5 +33,17 @@ public class ConnectApi {
 
     public static void resetPower(String id) {
         Connection.getInstance().appendMsgToQueue("resetPower id=" + id);
+    }
+
+    public static void addPlan(PlanBean bean) {
+        Connection.getInstance().appendMsgToQueue("addPlan " + gson.toJson(bean));
+    }
+
+    public static void enablePlanById(String id, boolean enable) {
+        Connection.getInstance().appendMsgToQueue("enablePlanById " + id + " " + enable);
+    }
+
+    public static void deletePlanById(String id) {
+        Connection.getInstance().appendMsgToQueue("deletePlan " + id);
     }
 }

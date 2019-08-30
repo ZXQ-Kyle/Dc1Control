@@ -14,7 +14,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.Checkable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -109,9 +109,9 @@ public class CommonViewHolder extends RecyclerView.ViewHolder {
     }
 
     public CommonViewHolder setChecked(@IdRes int viewId, boolean isChecked) {
-        CheckBox cb = getView(viewId);
-        if (null != cb) {
-            cb.setChecked(isChecked);
+        Checkable impl = getView(viewId);
+        if (null != impl) {
+            impl.setChecked(isChecked);
         }
         return this;
     }

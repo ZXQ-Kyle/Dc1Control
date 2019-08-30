@@ -1,4 +1,4 @@
-package info.ponyo.dc1control.view;
+package info.ponyo.dc1control.view.device;
 
 import android.app.Dialog;
 import android.os.Bundle;

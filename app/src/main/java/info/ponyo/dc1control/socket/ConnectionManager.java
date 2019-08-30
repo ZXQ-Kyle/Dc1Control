@@ -21,6 +21,7 @@ import info.ponyo.dc1control.util.Const;
 import info.ponyo.dc1control.util.Event;
 import info.ponyo.dc1control.util.SpManager;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -30,7 +31,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LineBasedFrameDecoder;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.timeout.IdleState;
@@ -109,7 +110,7 @@ public class ConnectionManager {
         protected void initChannel(Channel ch) throws Exception {
             ch.pipeline().addLast(new StringDecoder(CharsetUtil.UTF_8));
             ch.pipeline().addLast(new StringEncoder(CharsetUtil.UTF_8));
-            ch.pipeline().addLast(new LineBasedFrameDecoder(1024 * 1024));
+            ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024*1024*1024, Unpooled.copiedBuffer("$_$".getBytes())));
             ch.pipeline().addLast(new IdleStateHandler(15, 15, 15));
             ch.pipeline().addLast("handler", new TcpClientHandler());
         }
@@ -196,7 +197,6 @@ public class ConnectionManager {
                         break;
                     }
                 }
-
             });
         }
     }

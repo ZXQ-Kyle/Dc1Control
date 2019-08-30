@@ -5,7 +5,7 @@
     android:minWidth="240dp"
     android:orientation="vertical">
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="64dp"
@@ -16,7 +16,7 @@
         android:textColor="@color/white"
         android:textStyle="bold" />
 
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -24,7 +24,7 @@
         android:text="服务器地址："
         android:textColor="@color/black" />
 
-    <android.support.v7.widget.AppCompatEditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/et_host"
         android:hint="192.168.1.1:8800"
         android:layout_width="match_parent"
@@ -44,14 +44,14 @@
         android:gravity="right">
 
 
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="取消"
             android:textColor="@color/black" />
 
-        <android.support.v7.widget.AppCompatButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

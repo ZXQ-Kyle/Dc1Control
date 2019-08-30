@@ -1,9 +1,10 @@
 package info.ponyo.dc1control.view.device;
 
-import android.support.v7.widget.SwitchCompat;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CompoundButton;
+
+import androidx.appcompat.widget.SwitchCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,10 +53,10 @@ public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
         ArrayList<String> names = bean.getNames();
         if (names != null && names.size() == 5) {
             holder.setText(R.id.tv_name, TextUtils.isEmpty(names.get(0)) ? "插排" : names.get(0))
-                    .setText(R.id.tv_1, TextUtils.isEmpty(names.get(1)) ? "1、总开关" : "1、" + names.get(1))
-                    .setText(R.id.tv_2, TextUtils.isEmpty(names.get(2)) ? "2、开关" : "2、" + names.get(2))
-                    .setText(R.id.tv_3, TextUtils.isEmpty(names.get(3)) ? "3、开关" : "3、" + names.get(3))
-                    .setText(R.id.tv_4, TextUtils.isEmpty(names.get(4)) ? "4、开关" : "4、" + names.get(4));
+                    .setText(R.id.tv_1, TextUtils.isEmpty(names.get(1)) ? "1. 总开关" : "1. " + names.get(1))
+                    .setText(R.id.tv_2, TextUtils.isEmpty(names.get(2)) ? "2. 开关" : "2. " + names.get(2))
+                    .setText(R.id.tv_3, TextUtils.isEmpty(names.get(3)) ? "3. 开关" : "3. " + names.get(3))
+                    .setText(R.id.tv_4, TextUtils.isEmpty(names.get(4)) ? "4. 开关" : "4. " + names.get(4));
         }
 
         String status = bean.getStatus();

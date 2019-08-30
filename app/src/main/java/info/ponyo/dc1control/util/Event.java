@@ -6,10 +6,11 @@ package info.ponyo.dc1control.util;
  * @Description:
  */
 public class Event {
-    public static final String CODE_JUMP_TO_PLAN="code_jump_to_plan";
+    public static final String CODE_JUMP_TO_PLAN="CODE_JUMP_TO_PLAN";
     public static final String CODE_DEVICE_LIST="CODE_DC1_LIST";
     public static final String CODE_PLAN_LIST="CODE_PLAN_LIST";
     public static final String CODE_JUMP_TO_ADD_PLAN = "CODE_JUMP_TO_ADD_PLAN";
+    public static final String CODE_ADD_PLAN = "CODE_ADD_PLAN";
 
     private String code;
     private Object data;

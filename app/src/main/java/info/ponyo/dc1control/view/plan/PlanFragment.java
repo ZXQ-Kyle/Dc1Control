@@ -2,18 +2,20 @@ package info.ponyo.dc1control.view.plan;
 
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -102,6 +104,10 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
     public void onEvent(Event event) {
         if (Event.CODE_PLAN_LIST.equals(event.getCode())) {
             mAdapter.setData((List<PlanBean>) event.getData());
+        } else if (Event.CODE_ADD_PLAN.equals(event.getCode())) {
+            List<PlanBean> data = mAdapter.getData();
+            data.add((PlanBean) event.getData());
+            mAdapter.notifyItemInserted(data.size() - 1);
         }
     }
 

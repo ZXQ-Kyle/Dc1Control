@@ -2,18 +2,19 @@ package info.ponyo.dc1control.view.device;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.util.Consumer;
-import android.support.v7.app.AppCompatDialogFragment;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatEditText;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDialogFragment;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.core.util.Consumer;
+import androidx.fragment.app.DialogFragment;
 
 import info.ponyo.dc1control.R;
 import info.ponyo.dc1control.socket.ConnectionManager;

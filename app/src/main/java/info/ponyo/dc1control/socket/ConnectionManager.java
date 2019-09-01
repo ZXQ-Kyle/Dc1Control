@@ -31,7 +31,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.LineBasedFrameDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.timeout.IdleState;
@@ -110,7 +110,7 @@ public class ConnectionManager {
         protected void initChannel(Channel ch) throws Exception {
             ch.pipeline().addLast(new StringDecoder(CharsetUtil.UTF_8));
             ch.pipeline().addLast(new StringEncoder(CharsetUtil.UTF_8));
-            ch.pipeline().addLast(new DelimiterBasedFrameDecoder(1024*1024*1024, Unpooled.copiedBuffer("$_$".getBytes())));
+            ch.pipeline().addLast(new LineBasedFrameDecoder(1024 * 1024 * 1024, true, false));
             ch.pipeline().addLast(new IdleStateHandler(15, 15, 15));
             ch.pipeline().addLast("handler", new TcpClientHandler());
         }

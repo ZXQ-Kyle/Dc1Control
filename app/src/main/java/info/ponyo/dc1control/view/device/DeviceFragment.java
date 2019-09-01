@@ -97,19 +97,21 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
 
     private void initView() {
         srl.setOnRefreshListener(() -> {
+            srl.setRefreshing(true);
             ConnectApi.queryDc1List();
-            srl.postDelayed(() -> srl.setRefreshing(false), 500);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new DeviceAdapter();
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
+        srl.setRefreshing(true);
         recyclerView.post(ConnectApi::queryDc1List);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Event event) {
         if (Event.CODE_DEVICE_LIST.equals(event.getCode())) {
+            srl.setRefreshing(false);
             mAdapter.setData((List<Dc1Bean>) event.getData());
         }
     }

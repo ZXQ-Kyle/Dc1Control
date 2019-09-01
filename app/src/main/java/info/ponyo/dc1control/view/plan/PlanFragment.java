@@ -96,13 +96,20 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
         if (dc1Bean != null) {
+            srl.setRefreshing(true);
             recyclerView.post(() -> ConnectApi.queryPlanList(dc1Bean.getId()));
+            recyclerView.postDelayed(() -> {
+                if (mAdapter.getData().isEmpty()) {
+                    ConnectApi.queryPlanList(dc1Bean.getId());
+                }
+            }, 1000);
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Event event) {
         if (Event.CODE_PLAN_LIST.equals(event.getCode())) {
+            srl.setRefreshing(false);
             mAdapter.setData((List<PlanBean>) event.getData());
         } else if (Event.CODE_ADD_PLAN.equals(event.getCode())) {
             List<PlanBean> data = mAdapter.getData();

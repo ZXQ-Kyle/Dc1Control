@@ -66,7 +66,7 @@ public class Connection {
             if (isActive()) {
                 try {
                     String message = messageQueue.take();
-                    channel.writeAndFlush(message + "$_$");
+                    channel.writeAndFlush(message + "\n");
                     Log.i("send", "run(SendTask.java:68)" + message);
                 } catch (InterruptedException | NullPointerException e) {
                     e.printStackTrace();

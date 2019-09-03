@@ -100,6 +100,9 @@ public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
             String s = dc1Bean.getStatus();
             StringBuilder sb = new StringBuilder(s);
             sb.replace(pos, pos + 1, isChecked ? "1" : "0");
+            if (isChecked && pos != 0) {
+                sb.replace(0, 1, "1");
+            }
             dc1Bean.setStatus(sb.toString());
             ConnectApi.switchDc1Status(dc1Bean.getId(), sb.toString());
         };

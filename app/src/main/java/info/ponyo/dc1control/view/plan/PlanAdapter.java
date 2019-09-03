@@ -27,6 +27,7 @@ public class PlanAdapter extends CommonAdapter<PlanBean> {
 
         holder.setText(R.id.tv_trigger_time, "触发时间：" + bean.getTriggerTime())
                 .setText(R.id.tv_trigger_status, "开关指令：" + bean.getStatus())
+                .setText(R.id.tv_repeat, "  |  周期：" + bean.getRepeat_2showstr())
                 .setChecked(R.id.sw, bean.isEnable())
                 .setOnItemClickListener();
 

@@ -1,7 +1,13 @@
 package info.ponyo.dc1control.bean;
 
 
+import android.text.TextUtils;
+
 public class PlanBean {
+
+    public static final String REPEAT_ONCE = "repeat_once";
+    public static final String REPEAT_EVERYDAY = "repeat_everyday";
+
     /**
      * uuid
      */
@@ -100,6 +106,10 @@ public class PlanBean {
 
     public String getRepeat() {
         return repeat;
+    }
+
+    public String getRepeat_2showstr() {
+        return TextUtils.isEmpty(repeat) || repeat.equals(REPEAT_EVERYDAY) ? "每天" : "一次";
     }
 
     public PlanBean setRepeat(String repeat) {

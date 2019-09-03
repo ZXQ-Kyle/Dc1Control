@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -9,24 +10,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
-        android:paddingTop="8dp"
+        android:paddingTop="12dp"
         android:paddingBottom="4dp"
-        android:textColor="@color/textPrimary"
-        android:textSize="14sp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/tv_trigger_status"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="触发时间：10:00:00" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_trigger_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/textGray"
         android:paddingLeft="16dp"
-        android:paddingBottom="8dp"
+        android:paddingBottom="12dp"
+        android:textColor="@color/textGrayLight"
+        android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_trigger_time" />
+        app:layout_constraintTop_toBottomOf="@id/tv_trigger_time"
+        tools:text="开关：1111" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_repeat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp"
+        android:textColor="@color/textGrayLight"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/tv_trigger_status"
+        app:layout_constraintTop_toBottomOf="@id/tv_trigger_time"
+        tools:text="tv_repeat" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/sw"

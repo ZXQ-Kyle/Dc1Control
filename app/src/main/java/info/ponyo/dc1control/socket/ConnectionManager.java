@@ -21,7 +21,6 @@ import info.ponyo.dc1control.util.Const;
 import info.ponyo.dc1control.util.Event;
 import info.ponyo.dc1control.util.SpManager;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -91,8 +90,8 @@ public class ConnectionManager {
         channelFuture.addListener((ChannelFuture future) -> {
             if (!future.isSuccess()) {
                 connectCount.set(0);
+                EventBus.getDefault().post(new Event().setCode(Event.CODE_CONNECT_ERROR));
             }
-            Log.i("ConnectionManager", "connect(ConnectionManager.java:92)" + future.isSuccess());
         });
     }
 
@@ -129,7 +128,6 @@ public class ConnectionManager {
         // 设备连接
         @Override
         public void channelActive(ChannelHandlerContext ctx) throws Exception {
-            Log.i("TcpClientHandler", "channelActive(TcpClientHandler.java:109)");
             if (ctx.channel() != null) {
                 conn.setChannel(ctx.channel());
             }
@@ -165,7 +163,6 @@ public class ConnectionManager {
 
         private void dispatchMsg(Connection conn, String msg) {
             threadPool.execute(() -> {
-                Log.i("------TcpClientHandler", "dispatchMsg(TcpClientHandler.java:166)" + msg.substring(0, Math.min(20, msg.length())) + "...------");
                 if (msg.startsWith("-")) {
                     return;
                 }
@@ -175,14 +172,17 @@ public class ConnectionManager {
                 }
                 switch (split[0]) {
                     case "queryDevice": {
-                        Type type = new TypeToken<ArrayList<Dc1Bean>>() {
-                        }.getType();
-                        ArrayList<Dc1Bean> dc1BeanArrayList = gson.fromJson(split[1], type);
-                        EventBus.getDefault().post(new Event().setCode(Event.CODE_DEVICE_LIST).setData(dc1BeanArrayList));
+                        try {
+                            Type type = new TypeToken<ArrayList<Dc1Bean>>() {
+                            }.getType();
+                            ArrayList<Dc1Bean> dc1BeanArrayList = gson.fromJson(split[1], type);
+                            EventBus.getDefault().post(new Event().setCode(Event.CODE_DEVICE_LIST).setData(dc1BeanArrayList));
+                        } catch (JsonSyntaxException e) {
+                            e.printStackTrace();
+                        }
                         break;
                     }
                     case "queryPlan": {
-                        Log.i("------" + System.currentTimeMillis(), "dispatchMsg(TcpClientHandler.java:182)" + split[1]);
                         try {
                             Type type = new TypeToken<ArrayList<PlanBean>>() {
                             }.getType();
@@ -192,6 +192,10 @@ public class ConnectionManager {
                             e.printStackTrace();
                         }
                         break;
+                    }
+                    case "planChanged": {
+                        String planId = split[1].replace("\n","");
+                        EventBus.getDefault().post(new Event().setCode(Event.CODE_PLAN_CHANGED).setData(planId));
                     }
                     default: {
                         break;

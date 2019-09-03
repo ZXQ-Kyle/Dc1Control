@@ -97,15 +97,24 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
 
     private void initView() {
         srl.setOnRefreshListener(() -> {
-            srl.setRefreshing(true);
+            setRefresh();
             ConnectApi.queryDc1List();
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new DeviceAdapter();
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
-        srl.setRefreshing(true);
+        setRefresh();
         recyclerView.post(ConnectApi::queryDc1List);
+    }
+
+    private void setRefresh() {
+        srl.setRefreshing(true);
+        srl.postDelayed(() -> {
+            if (srl != null && srl.isRefreshing()) {
+                srl.setRefreshing(false);
+            }
+        }, 2500);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -161,9 +170,7 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
                         dialog.dismiss();
                     })
                     .setPositiveButtonIcon(getResources().getDrawable(R.drawable.ic_confirm))
-                    .setNegativeButton("取消", (dialog1, which) -> {
-                        dialog1.dismiss();
-                    })
+                    .setNegativeButton("取消", (dialog1, which) -> dialog1.dismiss())
                     .setNegativeButtonIcon(getResources().getDrawable(R.drawable.ic_cancel))
                     .create()
                     .show();

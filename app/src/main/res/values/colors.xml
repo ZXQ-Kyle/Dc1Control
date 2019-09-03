@@ -6,6 +6,7 @@
 
     <color name="textPrimary">#0C0C0C</color>
     <color name="textGray">#3C3C3C</color>
+    <color name="textGrayLight">#5F5F5F</color>
     <color name="transparent">#0000</color>
 
     <color name="gray">#DBDBDB</color>

@@ -2,6 +2,7 @@ package info.ponyo.dc1control.view.plan;
 
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,6 +80,21 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
         super.onStop();
     }
 
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden) {
+            ConnectApi.queryPlanList(dc1Bean.getId());
+            setRefresh();
+        }
+    }
+
+    private void setRefresh() {
+        srl.setRefreshing(true);
+        srl.postDelayed(delayRefresh, 2500);
+    }
+
     private void initView() {
         fabAdd.setOnClickListener(v -> {
             EventBus.getDefault().post(new Event().setCode(Event.CODE_JUMP_TO_ADD_PLAN).setData(dc1Bean));
@@ -88,7 +104,6 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
             if (dc1Bean != null) {
                 ConnectApi.queryPlanList(dc1Bean.getId());
             }
-            srl.postDelayed(() -> srl.setRefreshing(false), 500);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
@@ -96,7 +111,7 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
         if (dc1Bean != null) {
-            srl.setRefreshing(true);
+            setRefresh();
             recyclerView.post(() -> ConnectApi.queryPlanList(dc1Bean.getId()));
             recyclerView.postDelayed(() -> {
                 if (mAdapter.getData().isEmpty()) {
@@ -108,13 +123,32 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Event event) {
-        if (Event.CODE_PLAN_LIST.equals(event.getCode())) {
-            srl.setRefreshing(false);
-            mAdapter.setData((List<PlanBean>) event.getData());
-        } else if (Event.CODE_ADD_PLAN.equals(event.getCode())) {
-            List<PlanBean> data = mAdapter.getData();
-            data.add((PlanBean) event.getData());
-            mAdapter.notifyItemInserted(data.size() - 1);
+        switch (event.getCode()) {
+            case Event.CODE_PLAN_LIST: {
+                srl.setRefreshing(false);
+                mAdapter.setData((List<PlanBean>) event.getData());
+                break;
+            }
+            case Event.CODE_ADD_PLAN: {
+                List<PlanBean> data = mAdapter.getData();
+                data.add((PlanBean) event.getData());
+                mAdapter.notifyItemInserted(data.size() - 1);
+                break;
+            }
+            case Event.CODE_PLAN_CHANGED: {
+                String planId = (String) event.getData();
+                List<PlanBean> data = mAdapter.getData();
+                for (int i = 0; i < data.size(); i++) {
+                    if (TextUtils.equals(data.get(i).getId(), planId)) {
+                        data.get(i).setEnable(false);
+                        mAdapter.notifyItemChanged(i);
+                        return;
+                    }
+                }
+            }
+            default: {
+                break;
+            }
         }
     }
 
@@ -139,5 +173,17 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
         this.dc1Bean = dc1Bean;
         return this;
     }
+
+    /**
+     * 延迟重置刷新状态
+     */
+    private Runnable delayRefresh = new Runnable() {
+        @Override
+        public void run() {
+            if (srl != null && srl.isRefreshing()) {
+                srl.setRefreshing(false);
+            }
+        }
+    };
 
 }

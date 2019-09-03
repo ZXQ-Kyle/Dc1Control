@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
@@ -41,6 +42,8 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
     public TextView tvTriggerTimeLabel;
     @BindView(R.id.tv_trigger_time)
     public TextView tvTriggerTime;
+    @BindView(R.id.tv_repeat)
+    public TextView tvRepeat;
     @BindView(R.id.tv_1)
     public TextView tv1;
     @BindView(R.id.tv_2)
@@ -60,7 +63,8 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
     @BindView(R.id.fab_add)
     public FloatingActionButton fab;
 
-    private String triggerTime;
+    private String mTriggerTime;
+    private String mRepeat;
 
     public static AddPlanFragment newInstance() {
         AddPlanFragment fragment = new AddPlanFragment();
@@ -82,6 +86,9 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         super.onStart();
         tvTriggerTimeLabel.setOnClickListener(this);
         tvTriggerTime.setOnClickListener(this);
+        tvRepeat.setOnClickListener(this);
+        fab.setOnClickListener(this::onClick);
+
         if (dc1Bean != null) {
             //开关名称及状态
             ArrayList<String> names = dc1Bean.getNames();
@@ -92,7 +99,6 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 tv4.setText(TextUtils.isEmpty(names.get(4)) ? "4. 开关" : "4. " + names.get(4));
             }
         }
-        fab.setOnClickListener(this::onClick);
     }
 
     private void showTimeDialog() {
@@ -107,8 +113,17 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        triggerTime = hourOfDay + ":" + minute + ":" + "00";
-        tvTriggerTime.setText(triggerTime);
+        StringBuilder sb = new StringBuilder();
+        if (hourOfDay < 10) {
+            sb.append("0");
+        }
+        sb.append(hourOfDay).append(":");
+        if (minute < 10) {
+            sb.append("0");
+        }
+        sb.append(minute).append(":").append("00");
+        mTriggerTime = sb.toString();
+        tvTriggerTime.setText(mTriggerTime);
     }
 
     @Override
@@ -119,9 +134,12 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 showTimeDialog();
                 break;
             }
+            case R.id.tv_repeat: {
+                showRepeatDialog();
+                break;
+            }
             case R.id.fab_add: {
                 save();
-
                 break;
             }
             default: {
@@ -130,9 +148,23 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         }
     }
 
+    private void showRepeatDialog() {
+        String[] repeat = {"一次", "每天"};
+        new AlertDialog.Builder(getContext())
+                .setTitle("频率")
+                .setIcon(R.drawable.ic_repeat)
+                .setItems(repeat, (dialog, which) -> {
+                    String s = repeat[which];
+                    tvRepeat.setText(s);
+                    mRepeat = which == 0 ? PlanBean.REPEAT_ONCE : PlanBean.REPEAT_EVERYDAY;
+                })
+                .create()
+                .show();
+    }
+
     private void save() {
-        if (TextUtils.isEmpty(triggerTime)){
-            SnackUtil.snack(tvTriggerTime,"必须设置触发时间");
+        if (TextUtils.isEmpty(mTriggerTime)) {
+            SnackUtil.snack(tvTriggerTime, "必须设置触发时间");
             return;
         }
         String sb1Command = this.sb1.isChecked() ? "1" : "0";
@@ -142,12 +174,23 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         PlanBean planBean = new PlanBean()
                 .setId(UUID.randomUUID().toString())
                 .setEnable(true)
-                .setTriggerTime(triggerTime)
+                .setTriggerTime(mTriggerTime)
                 .setStatus(sb1Command + sb2Command + sb3Command + sb4Command)
                 .setDeviceName(dc1Bean.getNames() == null || dc1Bean.getNames().isEmpty() ? "" : dc1Bean.getNames().get(0))
+                .setRepeat(mRepeat)
                 .setDeviceId(dc1Bean.getId());
         ConnectApi.addPlan(planBean);
         EventBus.getDefault().post(new Event().setCode(Event.CODE_ADD_PLAN).setData(planBean));
+
+        mTriggerTime = null;
+        tvTriggerTime.setText("");
+        mRepeat = null;
+        tvRepeat.setText("");
+        sb1.setChecked(true);
+        sb2.setChecked(true);
+        sb3.setChecked(true);
+        sb4.setChecked(true);
+
         getActivity().onBackPressed();
     }
 }

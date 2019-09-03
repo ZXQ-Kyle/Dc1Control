@@ -2,9 +2,10 @@ package info.ponyo.dc1control.view;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.appcompat.app.AppCompatActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -27,16 +28,19 @@ public class MainActivity extends AppCompatActivity {
     private DeviceFragment deviceFragment;
     private PlanFragment planFragment;
     private AddPlanFragment addPlanFragment;
+
     /**
      * 维护fragment栈
      */
     private ArrayList<Fragment> fragmentStack = new ArrayList<>(3);
+    private AlertDialog mAlertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         EventBus.getDefault().register(this);
+
         if (deviceFragment == null) {
             deviceFragment = DeviceFragment.newInstance();
             getFragmentTransaction()
@@ -90,31 +94,58 @@ public class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Event event) {
-        if (event.getCode().equals(Event.CODE_JUMP_TO_PLAN)) {
-            FragmentTransaction transaction = getFragmentTransaction();
-            transaction.hide(deviceFragment);
-            if (planFragment == null) {
-                planFragment = PlanFragment.newInstance();
-                transaction.add(R.id.container, planFragment, PlanFragment.class.getSimpleName());
-            } else {
-                transaction.show(planFragment);
+        switch (event.getCode()) {
+            case Event.CODE_JUMP_TO_PLAN: {
+                FragmentTransaction transaction = getFragmentTransaction();
+                transaction.hide(deviceFragment);
+                if (planFragment == null) {
+                    planFragment = PlanFragment.newInstance();
+                    transaction.add(R.id.container, planFragment, PlanFragment.class.getSimpleName());
+                } else {
+                    transaction.show(planFragment);
+                }
+                transaction.commit();
+                fragmentStack.add(planFragment);
+                planFragment.setDc1Bean((Dc1Bean) event.getData());
+                break;
             }
-            transaction.commit();
-            fragmentStack.add(planFragment);
-            planFragment.setDc1Bean((Dc1Bean) event.getData());
-        } else if (event.getCode().equals(Event.CODE_JUMP_TO_ADD_PLAN)) {
-            FragmentTransaction transaction = getFragmentTransaction();
-            transaction.hide(planFragment);
-            if (addPlanFragment == null) {
-                addPlanFragment = AddPlanFragment.newInstance();
-                transaction.add(R.id.container, addPlanFragment, AddPlanFragment.class.getSimpleName());
-            } else {
-                transaction.show(addPlanFragment);
+            case Event.CODE_JUMP_TO_ADD_PLAN: {
+                FragmentTransaction transaction = getFragmentTransaction();
+                transaction.hide(planFragment);
+                if (addPlanFragment == null) {
+                    addPlanFragment = AddPlanFragment.newInstance();
+                    transaction.add(R.id.container, addPlanFragment, AddPlanFragment.class.getSimpleName());
+                } else {
+                    transaction.show(addPlanFragment);
+                }
+                transaction.commit();
+                fragmentStack.add(addPlanFragment);
+                addPlanFragment.setDc1Bean((Dc1Bean) event.getData());
+                break;
             }
-            transaction.commit();
-            fragmentStack.add(addPlanFragment);
-            addPlanFragment.setDc1Bean((Dc1Bean) event.getData());
+            case Event.CODE_CONNECT_ERROR: {
+                showServerUnconnectDialog();
+                break;
+            }
+            default: {
+                break;
+            }
         }
+    }
+
+    private void showServerUnconnectDialog() {
+        if (mAlertDialog == null) {
+            mAlertDialog = new AlertDialog.Builder(this)
+                    .setTitle("警告")
+                    .setMessage("服务器连接失败")
+                    .setPositiveButton("确定", (dialog, which) -> dialog.dismiss())
+                    .setPositiveButtonIcon(getResources().getDrawable(R.drawable.ic_confirm))
+                    .create();
+        }
+        if (mAlertDialog.isShowing()) {
+            return;
+        }
+        mAlertDialog.show();
     }
 
     private FragmentTransaction getFragmentTransaction() {

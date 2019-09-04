@@ -2,6 +2,7 @@ package info.ponyo.dc1control.view.device;
 
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,6 +32,7 @@ import info.ponyo.dc1control.base.CommonViewHolder;
 import info.ponyo.dc1control.base.OnRecyclerViewItemClickListener;
 import info.ponyo.dc1control.bean.Dc1Bean;
 import info.ponyo.dc1control.socket.ConnectApi;
+import info.ponyo.dc1control.socket.ConnectionManager;
 import info.ponyo.dc1control.util.Event;
 
 /**
@@ -76,6 +78,24 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelableArrayList("devices", (ArrayList<? extends Parcelable>) mAdapter.getData());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        ConnectionManager.getInstance().reset();
+        if (savedInstanceState != null) {
+            ArrayList<Dc1Bean> devices = savedInstanceState.getParcelableArrayList("devices");
+            if (devices != null && mAdapter != null) {
+                mAdapter.setData(devices);
+            }
+        }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -146,7 +166,7 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
             EditText etSwitch4 = view.findViewById(R.id.et_switch_4);
 
             ArrayList<String> names = dc1Bean.getNames();
-            if (names != null && names.size() == 5) {
+            if (names.size() == 5) {
                 etSwitch.setText(names.get(0));
                 etSwitch1.setText(names.get(1));
                 etSwitch2.setText(names.get(2));
@@ -181,7 +201,7 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
         new AlertDialog.Builder(getContext())
                 .setIcon(R.drawable.ic_setting)
                 .setTitle("提示")
-                .setMessage("用电量每增加50kwh更新数据,点击重置重新计算")
+                .setMessage("用电量每增加0.05kwh更新数据,点击重置重新计算")
                 .setCancelable(true)
                 .setPositiveButton("重置", (dialog, which) -> {
                     ConnectApi.resetPower(dc1Bean.getId());

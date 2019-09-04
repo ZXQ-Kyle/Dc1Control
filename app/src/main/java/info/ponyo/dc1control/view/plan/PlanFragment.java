@@ -170,6 +170,9 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
     }
 
     public PlanFragment setDc1Bean(Dc1Bean dc1Bean) {
+        if (this.dc1Bean != dc1Bean && mAdapter != null && mAdapter.getData() != null) {
+            mAdapter.getData().clear();
+        }
         this.dc1Bean = dc1Bean;
         return this;
     }

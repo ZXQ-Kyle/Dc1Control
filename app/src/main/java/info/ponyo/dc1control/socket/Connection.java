@@ -47,6 +47,7 @@ public class Connection {
     private final LinkedBlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
 
     public void appendMsgToQueue(String msg) {
+        ConnectionManager.getInstance().connect();
         try {
             messageQueue.put(msg);
         } catch (InterruptedException e) {
@@ -59,7 +60,9 @@ public class Connection {
         appendMsgToQueue("-");
     }
 
-    // 定时任务发送消息给服务器端
+    /**
+     * 定时任务发送消息给服务器端
+     */
     private class SendTask implements Runnable {
         @Override
         public void run() {

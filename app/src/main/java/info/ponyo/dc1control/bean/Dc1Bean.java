@@ -1,11 +1,14 @@
 package info.ponyo.dc1control.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
  * @author zxq
  */
-public class Dc1Bean {
+public class Dc1Bean implements Parcelable {
     /**
      * 唯一id
      */
@@ -137,4 +140,52 @@ public class Dc1Bean {
                 ", names=" + names +
                 '}';
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
+        dest.writeString(this.status);
+        dest.writeInt(this.I);
+        dest.writeInt(this.V);
+        dest.writeInt(this.P);
+        dest.writeLong(this.updateTime);
+        dest.writeByte(this.online ? (byte) 1 : (byte) 0);
+        dest.writeLong(this.powerStartTime);
+        dest.writeLong(this.totalPower);
+        dest.writeStringList(this.names);
+    }
+
+    public Dc1Bean() {
+    }
+
+    protected Dc1Bean(Parcel in) {
+        this.id = in.readString();
+        this.status = in.readString();
+        this.I = in.readInt();
+        this.V = in.readInt();
+        this.P = in.readInt();
+        this.updateTime = in.readLong();
+        this.online = in.readByte() != 0;
+        this.powerStartTime = in.readLong();
+        this.totalPower = in.readLong();
+        this.names = in.createStringArrayList();
+    }
+
+    public static final Parcelable.Creator<Dc1Bean> CREATOR = new Parcelable.Creator<Dc1Bean>() {
+        @Override
+        public Dc1Bean createFromParcel(Parcel source) {
+            return new Dc1Bean(source);
+        }
+
+        @Override
+        public Dc1Bean[] newArray(int size) {
+            return new Dc1Bean[size];
+        }
+    };
 }

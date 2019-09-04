@@ -24,7 +24,7 @@ import info.ponyo.dc1control.socket.ConnectApi;
  */
 public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss", Locale.getDefault());
 
     @Override
     public int initLayoutId() {
@@ -35,7 +35,10 @@ public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
     public void onBind(CommonViewHolder holder, int position) {
         Dc1Bean bean = getData().get(position);
 
-        holder.setText(R.id.tv_info, String.format("电压:%d  电流:%d  功率:%d", bean.getV(), bean.getI(), bean.getP()))
+        holder.setBackgroundColor(R.id.root, bean.isOnline() ? R.color.transparent : R.color.darkGray)
+                .setVisibility(R.id.iv_offline, bean.isOnline() ? View.GONE : View.VISIBLE)
+                .setText(R.id.tv_info, String.format(Locale.getDefault(),
+                        "电压:%dV  电流:%dmA  功率:%dW", bean.getV(), bean.getI(), bean.getP()))
                 .setOnItemChildClickListener(R.id.iv_edit)
                 .setOnItemChildClickListener(R.id.iv_plan)
                 .setOnItemChildClickListener(R.id.tv_power_info);
@@ -44,9 +47,9 @@ public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
             holder.setVisibility(R.id.tv_power_info, View.GONE);
         } else {
             String powerInfo = String.format(Locale.getDefault(),
-                    "从%s至今用电量为%dkwh",
+                    "从%s至今用电量为%.2fkwh",
                     sdf.format(new Date(bean.getPowerStartTime())),
-                    bean.getTotalPower());
+                    bean.getTotalPower() / 1000d);
             holder.setText(R.id.tv_power_info, powerInfo);
         }
         //开关名称及状态

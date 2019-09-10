@@ -81,7 +81,7 @@ public class ConnectionManager {
     }
 
     public void connect() {
-        Log.i("ConnectionManager", "connect(ConnectionManager.java:82)" + conn.isActive());
+        Log.i("ConnectionManager", "connect(ConnectionManager.java:84)" + conn.isActive());
         if (conn.isActive()) {
             return;
         }

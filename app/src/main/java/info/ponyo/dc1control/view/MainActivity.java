@@ -2,6 +2,7 @@ package info.ponyo.dc1control.view;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 
 import info.ponyo.dc1control.R;
 import info.ponyo.dc1control.bean.Dc1Bean;
+import info.ponyo.dc1control.socket.Connection;
 import info.ponyo.dc1control.util.Event;
 import info.ponyo.dc1control.view.device.DeviceFragment;
 import info.ponyo.dc1control.view.plan.PlanFragment;
@@ -41,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         EventBus.getDefault().register(this);
 
+        if (savedInstanceState != null) {
+            deviceFragment = (DeviceFragment) getSupportFragmentManager().getFragment(savedInstanceState, DeviceFragment.class.getSimpleName());
+            planFragment = (PlanFragment) getSupportFragmentManager().getFragment(savedInstanceState, PlanFragment.class.getSimpleName());
+            addPlanFragment = (AddPlanFragment) getSupportFragmentManager().getFragment(savedInstanceState, AddPlanFragment.class.getSimpleName());
+        }
+
+
         if (deviceFragment == null) {
             deviceFragment = DeviceFragment.newInstance();
             getFragmentTransaction()
@@ -53,6 +62,20 @@ public class MainActivity extends AppCompatActivity {
         }
         fragmentStack.clear();
         fragmentStack.add(deviceFragment);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        if (deviceFragment != null) {
+            getSupportFragmentManager().putFragment(outState, DeviceFragment.class.getSimpleName(), deviceFragment);
+        }
+        if (planFragment != null) {
+            getSupportFragmentManager().putFragment(outState, PlanFragment.class.getSimpleName(), planFragment);
+        }
+        if (addPlanFragment != null) {
+            getSupportFragmentManager().putFragment(outState, AddPlanFragment.class.getSimpleName(), addPlanFragment);
+        }
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -124,7 +147,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
             case Event.CODE_CONNECT_ERROR: {
-                showServerUnconnectDialog();
+                findViewById(R.id.container).postDelayed(() -> {
+                    if (Connection.getInstance().isActive()) {
+                        return;
+                    }
+                    showServerUnconnectDialog();
+                }, 3000);
                 break;
             }
             default: {

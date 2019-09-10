@@ -18,6 +18,6 @@ public class BaseApplication extends Application {
         super.onCreate();
         registerActivityLifecycleCallbacks(new info.ponyo.dc1control.base.ActivityLifecycleCallbacks());
         SpManager.initInstance(this);
-        Bugly.init(getApplicationContext(), "2c489a8155", false);
+        Bugly.init(this, "2c489a8155", false);
     }
 }

@@ -52,17 +52,46 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line_trigger_time" />
 
-    <TextView
-        android:id="@+id/tv_repeat"
-        android:layout_width="0dp"
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cb_repeat_once"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="每天"
-        android:padding="8dp"
-        android:textColor="@color/textGray"
-        android:textSize="14sp"
+        android:text="一次"
+        app:buttonTint="@color/colorAccent"
         app:layout_constraintLeft_toLeftOf="@id/tv_repeat_label"
+        app:layout_constraintRight_toLeftOf="@id/cb_repeat_everyday"
+        app:layout_constraintTop_toBottomOf="@id/tv_repeat_label" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cb_repeat_everyday"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="每天"
+        app:buttonTint="@color/colorAccent"
+        app:layout_constraintLeft_toRightOf="@id/cb_repeat_once"
+        app:layout_constraintRight_toLeftOf="@id/cb_repeat_customize"
+        app:layout_constraintTop_toBottomOf="@id/tv_repeat_label" />
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/cb_repeat_customize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="自定义"
+        app:buttonTint="@color/colorAccent"
+        app:layout_constraintLeft_toRightOf="@id/cb_repeat_everyday"
         app:layout_constraintRight_toRightOf="@id/tv_repeat_label"
         app:layout_constraintTop_toBottomOf="@id/tv_repeat_label" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_weekday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="16dp"
+        app:layout_constraintLeft_toLeftOf="@id/tv_repeat_label"
+        app:layout_constraintRight_toRightOf="@id/tv_repeat_label"
+        app:layout_constraintTop_toBottomOf="@id/cb_repeat_customize" />
 
     <TextView
         android:id="@+id/line_repeat"
@@ -70,7 +99,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_repeat" />
+        app:layout_constraintTop_toBottomOf="@id/rv_weekday" />
 
     <TextView
         android:id="@+id/tv_status_label"

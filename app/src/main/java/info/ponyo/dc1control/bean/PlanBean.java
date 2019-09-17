@@ -3,10 +3,32 @@ package info.ponyo.dc1control.bean;
 
 import android.text.TextUtils;
 
+import java.util.ArrayList;
+
 public class PlanBean {
+
+    public static ArrayList<String> WEEK_DAY_CN = new ArrayList<>();
+
+    static {
+        WEEK_DAY_CN.add("周一");
+        WEEK_DAY_CN.add("周二");
+        WEEK_DAY_CN.add("周三");
+        WEEK_DAY_CN.add("周四");
+        WEEK_DAY_CN.add("周五");
+        WEEK_DAY_CN.add("周六");
+        WEEK_DAY_CN.add("周日");
+    }
 
     public static final String REPEAT_ONCE = "repeat_once";
     public static final String REPEAT_EVERYDAY = "repeat_everyday";
+
+    public static final String DAY_MONDAY = "1";
+    public static final String DAY_TUESDAY = "2";
+    public static final String DAY_WEDNESDAY = "3";
+    public static final String DAY_THURSDAY = "4";
+    public static final String DAY_FRIDAY = "5";
+    public static final String DAY_SATURDAY = "6";
+    public static final String DAY_SUNDAY = "7";
 
     /**
      * uuid
@@ -109,7 +131,27 @@ public class PlanBean {
     }
 
     public String getRepeat_2showstr() {
-        return TextUtils.isEmpty(repeat) || repeat.equals(REPEAT_EVERYDAY) ? "每天" : "一次";
+        if (TextUtils.isEmpty(repeat) || REPEAT_EVERYDAY.equals(repeat)) {
+            return "每天";
+        }
+        if (REPEAT_ONCE.equals(repeat)) {
+            return "一次";
+        }
+        String[] split = repeat.split(",");
+        StringBuilder sb = new StringBuilder("每");
+        for (int i = 0; i < split.length; i++) {
+            try {
+                int anInt = Integer.parseInt(split[i]);
+                String weekDay = WEEK_DAY_CN.get(anInt - 1);
+                sb.append(weekDay).append("，");
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        if (sb.charAt(sb.length() - 1) == '，') {
+            return sb.substring(0, sb.length() - 1);
+        }
+        return sb.toString();
     }
 
     public PlanBean setRepeat(String repeat) {

@@ -60,8 +60,8 @@ public class DeletePlanDialog extends AppCompatDialogFragment {
             WindowManager.LayoutParams params = window.getAttributes();
             //修改gravity
             params.gravity = Gravity.BOTTOM;
-            params.width = (int) (window.getWindowManager().getDefaultDisplay().getWidth()*0.99);
-            window.getDecorView().setPadding(0,0,0,8);
+            params.width = (int) (window.getWindowManager().getDefaultDisplay().getWidth()*0.95);
+            window.getDecorView().setPadding(0,0,0,16);
             window.setAttributes(params);
 
         }

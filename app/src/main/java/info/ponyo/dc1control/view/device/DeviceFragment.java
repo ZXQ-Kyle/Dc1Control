@@ -199,7 +199,7 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
 
     private void showResetPowerDialog(Dc1Bean dc1Bean) {
         new AlertDialog.Builder(getContext())
-                .setIcon(R.drawable.ic_setting)
+                .setIcon(R.drawable.ic_tip)
                 .setTitle("提示")
                 .setMessage("用电量每增加0.05kwh更新数据,点击重置重新计算")
                 .setCancelable(true)

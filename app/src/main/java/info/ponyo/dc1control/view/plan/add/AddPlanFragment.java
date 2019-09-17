@@ -7,12 +7,15 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -24,6 +27,9 @@ import java.util.UUID;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import info.ponyo.dc1control.R;
+import info.ponyo.dc1control.base.CommonAdapter;
+import info.ponyo.dc1control.base.CommonViewHolder;
+import info.ponyo.dc1control.base.OnRecyclerViewItemClickListener;
 import info.ponyo.dc1control.bean.Dc1Bean;
 import info.ponyo.dc1control.bean.PlanBean;
 import info.ponyo.dc1control.socket.ConnectApi;
@@ -35,15 +41,13 @@ import info.ponyo.dc1control.util.SnackUtil;
  *
  * @author zxq
  */
-public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTimeSetListener, View.OnClickListener {
+public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTimeSetListener, View.OnClickListener, OnRecyclerViewItemClickListener {
     private Dc1Bean dc1Bean;
 
     @BindView(R.id.tv_trigger_time_label)
     public TextView tvTriggerTimeLabel;
     @BindView(R.id.tv_trigger_time)
     public TextView tvTriggerTime;
-    @BindView(R.id.tv_repeat)
-    public TextView tvRepeat;
     @BindView(R.id.tv_1)
     public TextView tv1;
     @BindView(R.id.tv_2)
@@ -62,9 +66,18 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
     public SwitchCompat sb4;
     @BindView(R.id.fab_add)
     public FloatingActionButton fab;
+    @BindView(R.id.rv_weekday)
+    public RecyclerView recyclerView;
+    @BindView(R.id.cb_repeat_once)
+    public CheckBox cbRepeatOnce;
+    @BindView(R.id.cb_repeat_everyday)
+    public CheckBox cbRepeatEveryday;
+    @BindView(R.id.cb_repeat_customize)
+    public CheckBox cbRepeatCustomize;
 
     private String mTriggerTime;
     private String mRepeat;
+    private WeekdayAdapter mAdapter;
 
     public static AddPlanFragment newInstance() {
         AddPlanFragment fragment = new AddPlanFragment();
@@ -86,9 +99,21 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         super.onStart();
         tvTriggerTimeLabel.setOnClickListener(this);
         tvTriggerTime.setOnClickListener(this);
-        tvRepeat.setOnClickListener(this);
+        cbRepeatOnce.setOnClickListener(this);
+        cbRepeatEveryday.setOnClickListener(this);
+        cbRepeatCustomize.setOnClickListener(this);
         fab.setOnClickListener(this::onClick);
+        cbRepeatEveryday.setChecked(true);
 
+        initNames();
+
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        mAdapter = new WeekdayAdapter();
+        recyclerView.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(this);
+    }
+
+    private void initNames() {
         if (dc1Bean != null) {
             //开关名称及状态
             ArrayList<String> names = dc1Bean.getNames();
@@ -101,9 +126,10 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         }
     }
 
-    private void showTimeDialog() {
-        new TimePickerDialog(getContext(), this, 0, 0, true)
-                .show();
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        initNames();
     }
 
     public AddPlanFragment setDc1Bean(Dc1Bean dc1Bean) {
@@ -131,35 +157,38 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         switch (v.getId()) {
             case R.id.tv_trigger_time_label:
             case R.id.tv_trigger_time: {
-                showTimeDialog();
-                break;
-            }
-            case R.id.tv_repeat: {
-                showRepeatDialog();
+                new TimePickerDialog(getContext(), this, 0, 0, true)
+                        .show();
                 break;
             }
             case R.id.fab_add: {
                 save();
                 break;
             }
+            case R.id.cb_repeat_once: {
+                cbRepeatOnce.setChecked(true);
+                cbRepeatEveryday.setChecked(false);
+                cbRepeatCustomize.setChecked(false);
+                mAdapter.clearState();
+                break;
+            }
+            case R.id.cb_repeat_everyday: {
+                cbRepeatOnce.setChecked(false);
+                cbRepeatEveryday.setChecked(true);
+                cbRepeatCustomize.setChecked(false);
+                mAdapter.clearState();
+                break;
+            }
+            case R.id.cb_repeat_customize: {
+                cbRepeatOnce.setChecked(false);
+                cbRepeatEveryday.setChecked(false);
+                cbRepeatCustomize.setChecked(true);
+                break;
+            }
             default: {
                 break;
             }
         }
-    }
-
-    private void showRepeatDialog() {
-        String[] repeat = {"一次", "每天"};
-        new AlertDialog.Builder(getContext())
-                .setTitle("频率")
-                .setIcon(R.drawable.ic_repeat)
-                .setItems(repeat, (dialog, which) -> {
-                    String s = repeat[which];
-                    tvRepeat.setText(s);
-                    mRepeat = which == 0 ? PlanBean.REPEAT_ONCE : PlanBean.REPEAT_EVERYDAY;
-                })
-                .create()
-                .show();
     }
 
     private void save() {
@@ -171,6 +200,13 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         String sb2Command = this.sb2.isChecked() ? "1" : "0";
         String sb3Command = this.sb3.isChecked() ? "1" : "0";
         String sb4Command = this.sb4.isChecked() ? "1" : "0";
+
+        boolean success = calcRepeat();
+        if (!success) {
+            Toast.makeText(getContext(), "周期设置有误", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         PlanBean planBean = new PlanBean()
                 .setId(UUID.randomUUID().toString())
                 .setEnable(true)
@@ -185,12 +221,57 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         mTriggerTime = null;
         tvTriggerTime.setText("");
         mRepeat = null;
-        tvRepeat.setText("");
+        cbRepeatEveryday.performClick();
         sb1.setChecked(true);
         sb2.setChecked(true);
         sb3.setChecked(true);
         sb4.setChecked(true);
 
         getActivity().onBackPressed();
+    }
+
+    private boolean calcRepeat() {
+        if (cbRepeatOnce.isChecked()) {
+            mRepeat = PlanBean.REPEAT_ONCE;
+            return true;
+        }
+        if (cbRepeatEveryday.isChecked()) {
+            mRepeat = PlanBean.REPEAT_EVERYDAY;
+            return true;
+        }
+        if (cbRepeatCustomize.isChecked()) {
+            boolean[] selectState = mAdapter.getSelectState();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < selectState.length; i++) {
+                if (selectState[i]) {
+                    sb.append(i + 1).append(",");
+                }
+            }
+            if (sb.length() == 0) {
+                return false;
+            }
+            if (sb.length() == 14) {
+                mRepeat = PlanBean.REPEAT_EVERYDAY;
+                return true;
+            }
+            mRepeat = sb.substring(0, sb.length() - 1);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onItemClick(CommonAdapter adapter, CommonViewHolder holder, int position) {
+        if (!cbRepeatCustomize.isChecked()) {
+            cbRepeatCustomize.performClick();
+        }
+        boolean[] selectState = mAdapter.getSelectState();
+        selectState[position] = !selectState[position];
+        mAdapter.notifyItemChanged(position);
+    }
+
+    @Override
+    public void onItemChildClick(CommonAdapter adapter, CommonViewHolder holder, int viewId, int position) {
+
     }
 }

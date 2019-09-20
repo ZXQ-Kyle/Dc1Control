@@ -29,8 +29,28 @@
         android:hint="192.168.1.1:8800"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:singleLine="true"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:textColor="@color/black" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:padding="16dp"
+        android:text="Token："
+        android:textColor="@color/black" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_token"
+        android:hint="默认为dc1server，请修改"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
         android:singleLine="true"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"

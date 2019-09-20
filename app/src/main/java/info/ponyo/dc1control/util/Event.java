@@ -13,6 +13,7 @@ public class Event {
     public static final String CODE_ADD_PLAN = "CODE_ADD_PLAN";
     public static final String CODE_CONNECT_ERROR = "CODE_CONNECT_ERROR";
     public static final String CODE_PLAN_CHANGED = "CODE_PLAN_CHANGED";
+    public static final String CODE_MESSAGE = "CODE_MESSAGE";
 
     private String code;
     private Object data;

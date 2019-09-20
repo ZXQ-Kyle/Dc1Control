@@ -155,6 +155,19 @@ public class MainActivity extends AppCompatActivity {
                 }, 3000);
                 break;
             }
+            case Event.CODE_MESSAGE: {
+                new AlertDialog.Builder(this)
+                        .setTitle("提示")
+                        .setIcon(R.drawable.ic_warning)
+                        .setMessage((String) event.getData())
+                        .setPositiveButton("确定", (dialog, which) -> {
+                            dialog.dismiss();
+                        })
+                        .setPositiveButtonIcon(getResources().getDrawable(R.drawable.ic_confirm))
+                        .create()
+                        .show();
+                break;
+            }
             default: {
                 break;
             }

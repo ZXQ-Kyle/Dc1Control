@@ -14,4 +14,8 @@ public class Const {
      * 服务器端口
      */
     public static final String KEY_PORT = "01";
+    /**
+     * 加密token
+     */
+    public static final String KEY_TOKEN = "02";
 }

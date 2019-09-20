@@ -17,8 +17,10 @@ import androidx.core.util.Consumer;
 import androidx.fragment.app.DialogFragment;
 
 import info.ponyo.dc1control.R;
+import info.ponyo.dc1control.socket.ConnectApi;
 import info.ponyo.dc1control.socket.ConnectionManager;
 import info.ponyo.dc1control.util.Const;
+import info.ponyo.dc1control.util.MD5;
 import info.ponyo.dc1control.util.SpManager;
 
 /**
@@ -28,7 +30,7 @@ import info.ponyo.dc1control.util.SpManager;
  */
 public class SettingDialog extends AppCompatDialogFragment {
 
-    private AppCompatEditText mEtHost;
+    private AppCompatEditText mEtHost, mEtToken;
     private AppCompatButton mBtnConfirm;
     private AppCompatButton mBtnCancel;
     private Consumer mOnConfirmClickListener;
@@ -44,6 +46,7 @@ public class SettingDialog extends AppCompatDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.view_edit_host, container);
         mEtHost = view.findViewById(R.id.et_host);
+        mEtToken = view.findViewById(R.id.et_token);
         mBtnConfirm = view.findViewById(R.id.btn_confirm);
         mBtnCancel = view.findViewById(R.id.btn_cancel);
         return view;
@@ -59,9 +62,11 @@ public class SettingDialog extends AppCompatDialogFragment {
             dialog.getWindow().setLayout((int) (dm.widthPixels * 0.85), ViewGroup.LayoutParams.WRAP_CONTENT);
         }
         mEtHost.setText(SpManager.getString(Const.KEY_HOST, "192.168.1.1") + ":" + SpManager.getInt(Const.KEY_PORT, 8800));
+        mEtToken.setText(SpManager.getString(Const.KEY_TOKEN, ""));
         mBtnCancel.setOnClickListener(v -> dismiss());
         mBtnConfirm.setOnClickListener(v -> {
             String trim = mEtHost.getText().toString().trim();
+            String token = mEtToken.getText().toString().trim();
             if (TextUtils.isEmpty(trim)) {
                 mEtHost.setError("服务器地址不能为空");
                 return;
@@ -82,6 +87,12 @@ public class SettingDialog extends AppCompatDialogFragment {
                 mEtHost.setError("输入格式错误");
                 return;
             }
+            if (TextUtils.isEmpty(token)) {
+                token = "dc1server";
+            }
+            String md5 = MD5.getMD5(token);
+            SpManager.putString(Const.KEY_TOKEN, md5);
+            ConnectApi.token = md5;
             ConnectionManager.getInstance().reset();
             if (mOnConfirmClickListener != null) {
                 mOnConfirmClickListener.accept(null);

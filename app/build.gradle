@@ -16,8 +16,8 @@ android {
         applicationId "info.ponyo.dc1control"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 6
-        versionName "2.2"
+        versionCode 7
+        versionName "2.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

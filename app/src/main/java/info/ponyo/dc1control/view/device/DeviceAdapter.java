@@ -99,6 +99,9 @@ public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
                 }
             }
             int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition < 0 || adapterPosition >= getData().size()) {
+                return;
+            }
             Dc1Bean dc1Bean = getData().get(adapterPosition);
             String s = dc1Bean.getStatus();
             StringBuilder sb = new StringBuilder(s);

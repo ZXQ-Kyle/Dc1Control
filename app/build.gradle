@@ -16,9 +16,10 @@ android {
         applicationId "info.ponyo.dc1control"
         minSdkVersion 18
         targetSdkVersion 28
-        versionCode 7
-        versionName "2.3"
+        versionCode 8
+        versionName "2.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -46,6 +47,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
@@ -55,6 +57,9 @@ dependencies {
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'com.jakewharton:butterknife:10.1.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+
+    implementation 'cn.leancloud.android:avoscloud-sdk:4.7.15'
+    implementation 'cn.leancloud.android:avoscloud-feedback:4.7.15@aar'
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'

@@ -19,6 +19,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.avos.avoscloud.feedback.FeedbackAgent;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -106,12 +108,17 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        new SettingDialog()
-                .setOnConfirmClickListener(o -> {
-                    mAdapter.setData(null);
-                    recyclerView.postDelayed(ConnectApi::queryDc1List, 100);
-                })
-                .show(getActivity().getSupportFragmentManager(), "SettingDialog");
+        if (item.getItemId() == R.id.menu_setting) {
+            new SettingDialog()
+                    .setOnConfirmClickListener(o -> {
+                        mAdapter.setData(null);
+                        recyclerView.postDelayed(ConnectApi::queryDc1List, 100);
+                    })
+                    .show(getActivity().getSupportFragmentManager(), "SettingDialog");
+        } else {
+            FeedbackAgent agent = new FeedbackAgent(getContext());
+            agent.startDefaultThreadActivity();
+        }
         return true;
     }
 

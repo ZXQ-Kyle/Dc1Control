@@ -4,5 +4,6 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
     <string name="setting">设置</string>
+    <string name="feedback">反馈</string>
 
 </resources>

@@ -199,9 +199,13 @@ public class ConnectionManager {
                     case "planChanged": {
                         String planId = split[1].replace("\n", "");
                         EventBus.getDefault().post(new Event().setCode(Event.CODE_PLAN_CHANGED).setData(planId));
+                        break;
+                    }
+                    case "tip": {
+                        EventBus.getDefault().post(new Event().setCode(Event.CODE_MESSAGE).setData(split[1]));
+                        break;
                     }
                     default: {
-                        EventBus.getDefault().post(new Event().setCode(Event.CODE_MESSAGE).setData(split[1]));
                         break;
                     }
                 }

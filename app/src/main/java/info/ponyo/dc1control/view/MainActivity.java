@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import info.ponyo.dc1control.R;
 import info.ponyo.dc1control.bean.Dc1Bean;
-import info.ponyo.dc1control.socket.Connection;
+import info.ponyo.dc1control.network.socket.Connection;
 import info.ponyo.dc1control.util.Event;
 import info.ponyo.dc1control.view.device.DeviceFragment;
 import info.ponyo.dc1control.view.plan.PlanFragment;

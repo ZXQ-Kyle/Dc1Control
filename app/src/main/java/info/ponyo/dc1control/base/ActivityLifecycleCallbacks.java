@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
-import info.ponyo.dc1control.socket.ConnectionManager;
+import info.ponyo.dc1control.network.socket.ConnectionManager;
 
 /**
  * @author zxq

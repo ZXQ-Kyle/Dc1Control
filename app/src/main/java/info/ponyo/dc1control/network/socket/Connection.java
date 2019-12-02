@@ -1,4 +1,4 @@
-package info.ponyo.dc1control.socket;
+package info.ponyo.dc1control.network.socket;
 
 
 import android.util.Log;

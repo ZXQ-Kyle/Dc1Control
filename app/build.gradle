@@ -61,6 +61,10 @@ dependencies {
     implementation 'cn.leancloud.android:avoscloud-sdk:4.7.15'
     implementation 'cn.leancloud.android:avoscloud-feedback:4.7.15@aar'
 
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+
     //java8 stream流兼容
     implementation 'com.annimon:stream:1.2.1'
     //滚轮view

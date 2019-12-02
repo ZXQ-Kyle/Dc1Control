@@ -38,7 +38,7 @@ import info.ponyo.dc1control.base.CommonViewHolder;
 import info.ponyo.dc1control.base.OnRecyclerViewItemClickListener;
 import info.ponyo.dc1control.bean.Dc1Bean;
 import info.ponyo.dc1control.bean.PlanBean;
-import info.ponyo.dc1control.socket.ConnectApi;
+import info.ponyo.dc1control.network.socket.ConnectApi;
 import info.ponyo.dc1control.util.Event;
 import info.ponyo.dc1control.util.SnackUtil;
 

@@ -15,7 +15,7 @@ import info.ponyo.dc1control.R;
 import info.ponyo.dc1control.base.CommonAdapter;
 import info.ponyo.dc1control.base.CommonViewHolder;
 import info.ponyo.dc1control.bean.Dc1Bean;
-import info.ponyo.dc1control.socket.ConnectApi;
+import info.ponyo.dc1control.network.socket.ConnectApi;
 
 /**
  * @author zxq

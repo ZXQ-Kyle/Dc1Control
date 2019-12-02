@@ -33,9 +33,14 @@ import info.ponyo.dc1control.base.CommonAdapter;
 import info.ponyo.dc1control.base.CommonViewHolder;
 import info.ponyo.dc1control.base.OnRecyclerViewItemClickListener;
 import info.ponyo.dc1control.bean.Dc1Bean;
-import info.ponyo.dc1control.socket.ConnectApi;
-import info.ponyo.dc1control.socket.ConnectionManager;
+import info.ponyo.dc1control.network.http.IHttpCallback;
+import info.ponyo.dc1control.network.http.WebService;
+import info.ponyo.dc1control.network.socket.ConnectApi;
+import info.ponyo.dc1control.network.socket.ConnectionManager;
+import info.ponyo.dc1control.util.Const;
 import info.ponyo.dc1control.util.Event;
+import info.ponyo.dc1control.util.SnackUtil;
+import info.ponyo.dc1control.util.SpManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -112,7 +117,8 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
             new SettingDialog()
                     .setOnConfirmClickListener(o -> {
                         mAdapter.setData(null);
-                        recyclerView.postDelayed(ConnectApi::queryDc1List, 100);
+                        WebService.createApi();
+                        setRefresh();
                     })
                     .show(getActivity().getSupportFragmentManager(), "SettingDialog");
         } else {
@@ -123,25 +129,29 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
     }
 
     private void initView() {
-        srl.setOnRefreshListener(() -> {
-            setRefresh();
-            ConnectApi.queryDc1List();
-        });
+        srl.setOnRefreshListener(this::setRefresh);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = new DeviceAdapter();
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
         setRefresh();
-        recyclerView.post(ConnectApi::queryDc1List);
     }
 
     private void setRefresh() {
         srl.setRefreshing(true);
-        srl.postDelayed(() -> {
-            if (srl != null && srl.isRefreshing()) {
+        WebService.enqueue(WebService.get().queryDeviceList(SpManager.getString(Const.KEY_TOKEN, "")), new IHttpCallback<List<Dc1Bean>>() {
+            @Override
+            public void onSuccess(@Nullable List<Dc1Bean> data) {
+                mAdapter.setData(data);
                 srl.setRefreshing(false);
             }
-        }, 2500);
+
+            @Override
+            public void onFailure(String message) {
+                SnackUtil.snack(recyclerView,message);
+                srl.setRefreshing(false);
+            }
+        });
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

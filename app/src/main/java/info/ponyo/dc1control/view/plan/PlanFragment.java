@@ -30,8 +30,13 @@ import info.ponyo.dc1control.base.CommonViewHolder;
 import info.ponyo.dc1control.base.OnRecyclerViewItemClickListener;
 import info.ponyo.dc1control.bean.Dc1Bean;
 import info.ponyo.dc1control.bean.PlanBean;
-import info.ponyo.dc1control.socket.ConnectApi;
+import info.ponyo.dc1control.network.http.IHttpCallback;
+import info.ponyo.dc1control.network.http.WebService;
+import info.ponyo.dc1control.network.socket.ConnectApi;
+import info.ponyo.dc1control.util.Const;
 import info.ponyo.dc1control.util.Event;
+import info.ponyo.dc1control.util.SnackUtil;
+import info.ponyo.dc1control.util.SpManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -85,14 +90,30 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
         if (!hidden) {
-            ConnectApi.queryPlanList(dc1Bean.getId());
-            setRefresh();
+            refresh();
         }
     }
 
-    private void setRefresh() {
+    private void refresh() {
+        if (dc1Bean == null) {
+            SnackUtil.snack(recyclerView, "无法获取设备Id");
+            return;
+        }
         srl.setRefreshing(true);
-        srl.postDelayed(delayRefresh, 2500);
+        WebService.enqueue(WebService.get().queryPlanList(SpManager.getString(Const.KEY_TOKEN), dc1Bean.getId()),
+                new IHttpCallback<List<PlanBean>>() {
+                    @Override
+                    public void onSuccess(@Nullable List<PlanBean> data) {
+                        mAdapter.setData(data);
+                        srl.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        SnackUtil.snack(recyclerView, message);
+                        srl.setRefreshing(false);
+                    }
+                });
     }
 
     private void initView() {
@@ -101,24 +122,14 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
         });
         srl.setOnRefreshListener(() -> {
             mAdapter.setData(null);
-            if (dc1Bean != null) {
-                ConnectApi.queryPlanList(dc1Bean.getId());
-            }
+            refresh();
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
         mAdapter = new PlanAdapter();
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
-        if (dc1Bean != null) {
-            setRefresh();
-            recyclerView.post(() -> ConnectApi.queryPlanList(dc1Bean.getId()));
-            recyclerView.postDelayed(() -> {
-                if (mAdapter.getData().isEmpty()) {
-                    ConnectApi.queryPlanList(dc1Bean.getId());
-                }
-            }, 1000);
-        }
+        refresh();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

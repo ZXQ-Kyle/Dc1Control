@@ -17,8 +17,8 @@ import androidx.core.util.Consumer;
 import androidx.fragment.app.DialogFragment;
 
 import info.ponyo.dc1control.R;
-import info.ponyo.dc1control.socket.ConnectApi;
-import info.ponyo.dc1control.socket.ConnectionManager;
+import info.ponyo.dc1control.network.socket.ConnectApi;
+import info.ponyo.dc1control.network.socket.ConnectionManager;
 import info.ponyo.dc1control.util.Const;
 import info.ponyo.dc1control.util.MD5;
 import info.ponyo.dc1control.util.SpManager;

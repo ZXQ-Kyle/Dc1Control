@@ -2,7 +2,9 @@ package info.ponyo.dc1control.base;
 
 import android.app.Application;
 import android.content.Context;
+
 import androidx.multidex.MultiDex;
+
 import com.avos.avoscloud.AVOSCloud;
 import com.tencent.bugly.Bugly;
 
@@ -15,6 +17,9 @@ import info.ponyo.dc1control.util.SpManager;
  * @Description:
  */
 public class BaseApplication extends Application {
+
+    public static BaseApplication instance;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -24,6 +29,7 @@ public class BaseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         registerActivityLifecycleCallbacks(new info.ponyo.dc1control.base.ActivityLifecycleCallbacks());
         SpManager.initInstance(this);
         Bugly.init(this, "2c489a8155", false);

@@ -188,5 +188,4 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
             }
         }
     };
-
 }

@@ -21,6 +21,7 @@ public class PlanBean {
 
     public static final String REPEAT_ONCE = "repeat_once";
     public static final String REPEAT_EVERYDAY = "repeat_everyday";
+    public static final String REPEAT_AT_FIXED_RATE = "repeat_at_fixed_rate";
 
     public static final String DAY_MONDAY = "1";
     public static final String DAY_TUESDAY = "2";
@@ -29,6 +30,11 @@ public class PlanBean {
     public static final String DAY_FRIDAY = "5";
     public static final String DAY_SATURDAY = "6";
     public static final String DAY_SUNDAY = "7";
+
+    public static final String SWITCH_INDEX_MAIN = "0";
+    public static final String SWITCH_INDEX_FIRST = "1";
+    public static final String SWITCH_INDEX_SECOND = "2";
+    public static final String SWITCH_INDEX_THIRD = "3";
 
     /**
      * uuid
@@ -51,9 +57,24 @@ public class PlanBean {
     private long updateTime;
 
     /**
-     * 设备开关指令
+     * 设备开关指令(例如：1101)
      */
     private String status;
+
+    /**
+     * 设备单控指令，例如：1开，0关
+     */
+    private String command;
+
+    /**
+     * 设备单控指令:控制开关对象
+     *
+     * @see #SWITCH_INDEX_MAIN
+     * @see #SWITCH_INDEX_FIRST
+     * @see #SWITCH_INDEX_SECOND
+     * @see #SWITCH_INDEX_THIRD
+     */
+    private String switchIndex;
 
     /**
      * 触发时间,
@@ -62,12 +83,17 @@ public class PlanBean {
     private String triggerTime;
 
     /**
-     * 重复状态，一次，每天，
+     * 重复状态:一次/每天/星期自定义[1,2,3,4]/定时周期性重复
      */
     private String repeat;
 
     /**
-     * 是否过期,重复一次的任务
+     * 定时周期性重复时，存储的数据:"30,5"(每30分钟执行一次，每次5分钟)
+     */
+    private String repeatData;
+
+    /**
+     * 是否开启,开启/关闭控制
      */
     private boolean enable;
 
@@ -137,6 +163,13 @@ public class PlanBean {
         if (REPEAT_ONCE.equals(repeat)) {
             return "一次";
         }
+        if (REPEAT_AT_FIXED_RATE.equals(repeat)) {
+            String[] split = repeatData.split(",");
+            if (split.length != 2) {
+                return "周期异常";
+            }
+            return String.format("每%s分钟执行一次，每次%s分钟", split[0], split[1]);
+        }
         String[] split = repeat.split(",");
         StringBuilder sb = new StringBuilder("每");
         for (int i = 0; i < split.length; i++) {
@@ -165,6 +198,36 @@ public class PlanBean {
 
     public PlanBean setEnable(boolean enable) {
         this.enable = enable;
+        return this;
+    }
+
+    public String getRepeatData() {
+        return repeatData;
+    }
+
+    /**
+     * 定时周期性重复时，存储的数据:"30,5"(每30分钟执行一次，每次5分钟)
+     */
+    public PlanBean setRepeatData(String repeatData) {
+        this.repeatData = repeatData;
+        return this;
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public PlanBean setCommand(String command) {
+        this.command = command;
+        return this;
+    }
+
+    public String getSwitchIndex() {
+        return switchIndex;
+    }
+
+    public PlanBean setSwitchIndex(String switchIndex) {
+        this.switchIndex = switchIndex;
         return this;
     }
 }

@@ -61,6 +61,11 @@ dependencies {
     implementation 'cn.leancloud.android:avoscloud-sdk:4.7.15'
     implementation 'cn.leancloud.android:avoscloud-feedback:4.7.15@aar'
 
+    //java8 stream流兼容
+    implementation 'com.annimon:stream:1.2.1'
+    //滚轮view
+    implementation 'com.contrarywind:wheelview:4.1.0'
+
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

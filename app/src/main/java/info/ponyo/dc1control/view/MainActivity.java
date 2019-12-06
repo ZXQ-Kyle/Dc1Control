@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         switch (fragment.getClass().getSimpleName()) {
             case "PlanFragment": {
                 getFragmentTransaction()
+                        .setCustomAnimations(R.anim.fragment_left_enter,R.anim.fragment_right_exit)
                         .show(deviceFragment)
                         .hide(planFragment)
                         .commit();
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             }
             case "AddPlanFragment": {
                 getFragmentTransaction()
+                        .setCustomAnimations(R.anim.fragment_left_enter,R.anim.fragment_right_exit)
                         .show(planFragment)
                         .hide(addPlanFragment)
                         .commit();
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         switch (event.getCode()) {
             case Event.CODE_JUMP_TO_PLAN: {
                 FragmentTransaction transaction = getFragmentTransaction();
+                transaction.setCustomAnimations(R.anim.fragment_right_enter, R.anim.fragment_left_exit, R.anim.fragment_left_enter, R.anim.fragment_left_exit);
                 transaction.hide(deviceFragment);
                 if (planFragment == null) {
                     planFragment = PlanFragment.newInstance();
@@ -134,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
             }
             case Event.CODE_JUMP_TO_ADD_PLAN: {
                 FragmentTransaction transaction = getFragmentTransaction();
+                transaction.setCustomAnimations(R.anim.fragment_right_enter, R.anim.fragment_left_exit, R.anim.fragment_left_enter, R.anim.fragment_left_exit);
                 transaction.hide(planFragment);
                 if (addPlanFragment == null) {
                     addPlanFragment = AddPlanFragment.newInstance();
@@ -191,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
 
     private FragmentTransaction getFragmentTransaction() {
         return getSupportFragmentManager()
-                .beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                .beginTransaction();
     }
 }

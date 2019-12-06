@@ -202,7 +202,7 @@ public class ConnectionManager {
                         break;
                     }
                     case "tip": {
-                        EventBus.getDefault().post(new Event().setCode(Event.CODE_MESSAGE).setData(split[1]));
+//                        EventBus.getDefault().post(new Event().setCode(Event.CODE_MESSAGE).setData(split[1]));
                         break;
                     }
                     default: {

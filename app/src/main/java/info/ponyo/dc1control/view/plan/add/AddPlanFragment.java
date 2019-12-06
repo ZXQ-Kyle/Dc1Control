@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -38,9 +39,12 @@ import info.ponyo.dc1control.base.CommonViewHolder;
 import info.ponyo.dc1control.base.OnRecyclerViewItemClickListener;
 import info.ponyo.dc1control.bean.Dc1Bean;
 import info.ponyo.dc1control.bean.PlanBean;
-import info.ponyo.dc1control.network.socket.ConnectApi;
+import info.ponyo.dc1control.network.http.IHttpCallback;
+import info.ponyo.dc1control.network.http.WebService;
+import info.ponyo.dc1control.util.Const;
 import info.ponyo.dc1control.util.Event;
 import info.ponyo.dc1control.util.SnackUtil;
+import info.ponyo.dc1control.util.SpManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -97,6 +101,8 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
     public WheelView wvTime;
     @BindView(R.id.cl_repeat_at_fixed_rate)
     public ConstraintLayout clRepeatAtFixedRate;
+    @BindView(R.id.cl_multi_switch)
+    public ConstraintLayout clMultiSwitch;
 
     private String mTriggerTime;
     private String mRepeat;
@@ -120,6 +126,10 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
     @Override
     public void onStart() {
         super.onStart();
+        clMultiSwitch.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+        clRepeatAtFixedRate.setVisibility(View.GONE);
+
         tvTriggerTimeLabel.setOnClickListener(this);
         tvTriggerTime.setOnClickListener(this);
         cbRepeatOnce.setOnClickListener(this);
@@ -171,16 +181,17 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         wvPeriod.setCyclic(false);
         wvPeriod.setOnItemSelectedListener(index -> {
             period.set(index + 1);
-            tvHint.setText(String.format("每%d分钟执行一次，每次开启%d分钟", period.get(), time.get()));
+            tvHint.setText(String.format("每%d分钟执行一次，每次开启%d分钟(立刻执行，触发时间无效)", period.get(), time.get()));
         });
 
         List<String> timeList = Stream.rangeClosed(1, 60).map(Object::toString).toList();
         StringWheelAdapter timeAdapter = new StringWheelAdapter(timeList);
         wvTime.setAdapter(timeAdapter);
-        wvPeriod.setCyclic(false);
+        wvTime.setCyclic(false);
+        wvTime.setCurrentItem(1);
         wvTime.setOnItemSelectedListener(index -> {
             time.set(index + 1);
-            tvHint.setText(String.format("每%d分钟执行一次，每次开启%d分钟", period.get(), time.get()));
+            tvHint.setText(String.format("每%d分钟执行一次，每次开启%d分钟(立刻执行，触发时间无效)", period.get(), time.get()));
         });
     }
 
@@ -243,6 +254,7 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 cbRepeatAtFixedRate.setChecked(false);
                 cbRepeatCustomize.setChecked(false);
                 mAdapter.clearState();
+                clMultiSwitch.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
                 clRepeatAtFixedRate.setVisibility(View.GONE);
                 break;
@@ -253,6 +265,7 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 cbRepeatAtFixedRate.setChecked(false);
                 cbRepeatCustomize.setChecked(false);
                 mAdapter.clearState();
+                clMultiSwitch.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
                 clRepeatAtFixedRate.setVisibility(View.GONE);
                 break;
@@ -263,6 +276,7 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 cbRepeatAtFixedRate.setChecked(true);
                 cbRepeatCustomize.setChecked(false);
                 mAdapter.clearState();
+                clMultiSwitch.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
                 clRepeatAtFixedRate.setVisibility(View.VISIBLE);
                 break;
@@ -272,6 +286,7 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 cbRepeatEveryday.setChecked(false);
                 cbRepeatAtFixedRate.setChecked(false);
                 cbRepeatCustomize.setChecked(true);
+                clMultiSwitch.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 clRepeatAtFixedRate.setVisibility(View.GONE);
                 break;
@@ -310,19 +325,30 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 .setCommand("1")
                 .setSwitchIndex(wvSwitch.getCurrentItem() + "")
                 .setRepeatData(String.format("%d,%d", wvPeriod.getCurrentItem() + 1, wvTime.getCurrentItem() + 1));
-        ConnectApi.addPlan(planBean);
-        EventBus.getDefault().post(new Event().setCode(Event.CODE_ADD_PLAN).setData(planBean));
 
-        mTriggerTime = null;
-        tvTriggerTime.setText("");
-        mRepeat = null;
-        cbRepeatEveryday.performClick();
-        sb1.setChecked(true);
-        sb2.setChecked(true);
-        sb3.setChecked(true);
-        sb4.setChecked(true);
 
-        getActivity().onBackPressed();
+        WebService.enqueue(WebService.get().addPlan(SpManager.getString(Const.KEY_TOKEN), planBean), new IHttpCallback<String>() {
+            @Override
+            public void onSuccess(@Nullable String data) {
+                EventBus.getDefault().post(new Event().setCode(Event.CODE_ADD_PLAN).setData(planBean));
+                mTriggerTime = null;
+                tvTriggerTime.setText("");
+                mRepeat = null;
+                cbRepeatEveryday.performClick();
+                sb1.setChecked(true);
+                sb2.setChecked(true);
+                sb3.setChecked(true);
+                sb4.setChecked(true);
+
+                getActivity().onBackPressed();
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Toast.makeText(AddPlanFragment.this.getContext(), message, Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private boolean calcRepeat() {

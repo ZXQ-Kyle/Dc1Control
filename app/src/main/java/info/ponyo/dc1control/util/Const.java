@@ -13,7 +13,8 @@ public class Const {
     /**
      * 服务器端口
      */
-    public static final String KEY_PORT = "01";
+    public static final String KEY_TCP_PORT = "03";
+    public static final String KEY_HTTP_PORT = "04";
     /**
      * 加密token
      */

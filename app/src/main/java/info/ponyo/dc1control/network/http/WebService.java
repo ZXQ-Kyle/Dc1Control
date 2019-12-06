@@ -4,6 +4,8 @@ package info.ponyo.dc1control.network.http;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import info.ponyo.dc1control.util.Const;
+import info.ponyo.dc1control.util.SpManager;
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -13,13 +15,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class WebService {
 
-    private static Api api = createApi();
+    private static String BASE_URL = "";
+
+    private static Api api;
 
     public static Api get() {
         return api;
     }
 
-    public static Api createApi() {
+    static {
+        createApi();
+    }
+
+    public static void createApi() {
+        String host = SpManager.getString(Const.KEY_HOST, "192.168.1.1");
+        String httpPort = SpManager.getString(Const.KEY_HTTP_PORT, "8880");
+        if (!host.startsWith("http")) {
+            host = "http://" + host;
+        }
+        BASE_URL = host + ":" + httpPort;
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(15, TimeUnit.SECONDS)
@@ -31,9 +45,9 @@ public class WebService {
                 //设置数据解析器
                 .addConverterFactory(GsonConverterFactory.create())
                 //设置网络请求的Url地址
-                .baseUrl(Api.BASE_URL)
+                .baseUrl(BASE_URL)
                 .build();
-        return retrofit.create(Api.class);
+        api = retrofit.create(Api.class);
     }
 
     /**

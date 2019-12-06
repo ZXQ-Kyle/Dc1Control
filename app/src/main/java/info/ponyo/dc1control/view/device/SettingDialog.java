@@ -17,6 +17,7 @@ import androidx.core.util.Consumer;
 import androidx.fragment.app.DialogFragment;
 
 import info.ponyo.dc1control.R;
+import info.ponyo.dc1control.network.http.WebService;
 import info.ponyo.dc1control.network.socket.ConnectApi;
 import info.ponyo.dc1control.network.socket.ConnectionManager;
 import info.ponyo.dc1control.util.Const;
@@ -30,7 +31,7 @@ import info.ponyo.dc1control.util.SpManager;
  */
 public class SettingDialog extends AppCompatDialogFragment {
 
-    private AppCompatEditText mEtHost, mEtToken;
+    private AppCompatEditText mEtHost, mEtToken, mTcpPort, mHttpPort;
     private AppCompatButton mBtnConfirm;
     private AppCompatButton mBtnCancel;
     private Consumer mOnConfirmClickListener;
@@ -46,6 +47,8 @@ public class SettingDialog extends AppCompatDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.view_edit_host, container);
         mEtHost = view.findViewById(R.id.et_host);
+        mTcpPort = view.findViewById(R.id.et_tcp_port);
+        mHttpPort = view.findViewById(R.id.et_http_port);
         mEtToken = view.findViewById(R.id.et_token);
         mBtnConfirm = view.findViewById(R.id.btn_confirm);
         mBtnCancel = view.findViewById(R.id.btn_cancel);
@@ -61,32 +64,23 @@ public class SettingDialog extends AppCompatDialogFragment {
             getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
             dialog.getWindow().setLayout((int) (dm.widthPixels * 0.85), ViewGroup.LayoutParams.WRAP_CONTENT);
         }
-        mEtHost.setText(SpManager.getString(Const.KEY_HOST, "192.168.1.1") + ":" + SpManager.getInt(Const.KEY_PORT, 8800));
+        mEtHost.setText(SpManager.getString(Const.KEY_HOST, "192.168.1.1"));
+        mTcpPort.setText(SpManager.getString(Const.KEY_TCP_PORT, "8800"));
+        mHttpPort.setText(SpManager.getString(Const.KEY_HTTP_PORT, "8880"));
         mEtToken.setText(SpManager.getString(Const.KEY_TOKEN, ""));
         mBtnCancel.setOnClickListener(v -> dismiss());
         mBtnConfirm.setOnClickListener(v -> {
             String trim = mEtHost.getText().toString().trim();
+            String tcpPort = mTcpPort.getText().toString().trim();
+            String httpPort = mHttpPort.getText().toString().trim();
             String token = mEtToken.getText().toString().trim();
             if (TextUtils.isEmpty(trim)) {
                 mEtHost.setError("服务器地址不能为空");
                 return;
             }
-            String[] strings = trim.split(":");
-            if (strings.length == 1) {
-                SpManager.putString(Const.KEY_HOST, strings[0]);
-                SpManager.putInt(Const.KEY_PORT, 80);
-            } else if (strings.length == 2) {
-                SpManager.putString(Const.KEY_HOST, strings[0]);
-                try {
-                    SpManager.putInt(Const.KEY_PORT, Integer.parseInt(strings[1]));
-                } catch (NumberFormatException e) {
-                    mEtHost.setError("输入格式错误");
-                    return;
-                }
-            } else {
-                mEtHost.setError("输入格式错误");
-                return;
-            }
+            SpManager.putString(Const.KEY_HOST, trim);
+            SpManager.putString(Const.KEY_TCP_PORT, tcpPort);
+            SpManager.putString(Const.KEY_HTTP_PORT, httpPort);
             if (TextUtils.isEmpty(token)) {
                 token = "dc1server";
             }
@@ -94,6 +88,7 @@ public class SettingDialog extends AppCompatDialogFragment {
             SpManager.putString(Const.KEY_TOKEN, md5);
             ConnectApi.token = md5;
             ConnectionManager.getInstance().reset();
+            WebService.createApi();
             if (mOnConfirmClickListener != null) {
                 mOnConfirmClickListener.accept(null);
             }

@@ -19,8 +19,6 @@ import retrofit2.http.Url;
  */
 public interface Api {
 
-    String BASE_URL = "http://frp.ponyo.space:50008/";
-
 
     /**
      * @param url 通用请求

@@ -117,7 +117,6 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
             new SettingDialog()
                     .setOnConfirmClickListener(o -> {
                         mAdapter.setData(null);
-                        WebService.createApi();
                         setRefresh();
                     })
                     .show(getActivity().getSupportFragmentManager(), "SettingDialog");

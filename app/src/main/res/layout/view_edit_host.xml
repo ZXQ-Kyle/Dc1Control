@@ -8,52 +8,94 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/title"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="48dp"
         android:background="@color/colorPrimary"
         android:gravity="center"
-        android:textSize="18sp"
         android:text="@string/setting"
         android:textColor="@color/white"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:padding="16dp"
+        android:layout_marginLeft="24dp"
+        android:padding="8dp"
         android:text="服务器地址："
         android:textColor="@color/black" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/et_host"
-        android:hint="192.168.1.1:8800"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
         android:layout_marginRight="28dp"
+        android:hint="192.168.1.1"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:singleLine="true"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
         android:textColor="@color/black" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:padding="16dp"
+        android:layout_marginLeft="24dp"
+        android:padding="8dp"
+        android:text="推送端口："
+        android:textColor="@color/black" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_tcp_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:hint="原8800"
+        android:inputType="number"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:singleLine="true"
+        android:textColor="@color/black" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:padding="8dp"
+        android:text="Http端口："
+        android:textColor="@color/black" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_http_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="28dp"
+        android:hint="原8880"
+        android:inputType="number"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:singleLine="true"
+        android:textColor="@color/black" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:padding="8dp"
         android:text="Token："
         android:textColor="@color/black" />
 
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/et_token"
-        android:hint="默认为dc1server，请修改"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="28dp"
         android:layout_marginRight="28dp"
+        android:hint="默认为dc1server，请修改"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:singleLine="true"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
         android:textColor="@color/black" />
 
     <LinearLayout

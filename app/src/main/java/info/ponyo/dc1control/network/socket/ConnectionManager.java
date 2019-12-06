@@ -86,8 +86,14 @@ public class ConnectionManager {
             return;
         }
         String host = SpManager.getString(Const.KEY_HOST, "192.168.1.1");
-        int port = SpManager.getInt(Const.KEY_PORT, 8800);
-        ChannelFuture channelFuture = b.connect(host, port);
+        String port = SpManager.getString(Const.KEY_TCP_PORT, "8800");
+        int inetPort = 80;
+        try {
+            inetPort = Integer.parseInt(port);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+        ChannelFuture channelFuture = b.connect(host, inetPort);
         // 添加连接监听
         channelFuture.addListener((ChannelFuture future) -> {
             if (!future.isSuccess()) {

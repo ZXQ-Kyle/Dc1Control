@@ -3,6 +3,7 @@ package info.ponyo.dc1control.view.device;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -147,7 +148,7 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
 
             @Override
             public void onFailure(String message) {
-                SnackUtil.snack(recyclerView,message);
+                SnackUtil.snack(recyclerView, message);
                 srl.setRefreshing(false);
             }
         });
@@ -196,11 +197,36 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
                     .setView(view)
                     .setPositiveButton("确定", (dialog, which) -> {
                         names.clear();
-                        names.add(etSwitch.getText().toString().trim());
-                        names.add(etSwitch1.getText().toString().trim());
-                        names.add(etSwitch2.getText().toString().trim());
-                        names.add(etSwitch3.getText().toString().trim());
-                        names.add(etSwitch4.getText().toString().trim());
+                        String name0 = etSwitch.getText().toString().trim();
+                        if (TextUtils.isEmpty(name0)) {
+                            name0 = "dc1_" + dc1Bean.getId().substring(dc1Bean.getId().length() - 4);
+                        }
+                        names.add(name0);
+
+                        String name1 = etSwitch1.getText().toString().trim();
+                        if (TextUtils.isEmpty(name1)) {
+                            name1 = "总开关";
+                        }
+                        names.add(name1);
+
+                        String name2 = etSwitch2.getText().toString().trim();
+                        if (TextUtils.isEmpty(name2)) {
+                            name2 = "分控1";
+                        }
+                        names.add(name2);
+
+                        String name3 = etSwitch3.getText().toString().trim();
+                        if (TextUtils.isEmpty(name3)) {
+                            name3 = "分控2";
+                        }
+                        names.add(name3);
+
+                        String name4 = etSwitch4.getText().toString().trim();
+                        if (TextUtils.isEmpty(name4)) {
+                            name4 = "分控3";
+                        }
+                        names.add(name4);
+
                         mAdapter.notifyItemChanged(position);
                         ConnectApi.updateDc1Name(dc1Bean.getId(), names);
                         dialog.dismiss();

@@ -113,145 +113,10 @@
         app:layout_constraintTop_toBottomOf="@id/rv_weekday" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_multi_switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line_repeat">
-
-        <TextView
-            android:id="@+id/tv_status_label"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="16dp"
-            android:padding="8dp"
-            android:text="触发开关"
-            android:textColor="@color/colorPrimary"
-            android:textSize="16sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/tv_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="64dp"
-            android:padding="12dp"
-            android:text="1. 总开关"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_status_label" />
-
-        <TextView
-            android:id="@+id/tv_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="64dp"
-            android:padding="12dp"
-            android:text="2. 开关"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_1" />
-
-        <TextView
-            android:id="@+id/tv_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="64dp"
-            android:padding="12dp"
-            android:text="3. 开关"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_2" />
-
-        <TextView
-            android:id="@+id/tv_4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="64dp"
-            android:padding="12dp"
-            android:text="4. 开关"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_3" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/sb_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="64dp"
-            android:checked="true"
-            android:paddingLeft="16dp"
-            android:paddingTop="8dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="8dp"
-            android:textColor="@drawable/selector_switch_button_color"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_1"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_1" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/sb_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="64dp"
-            android:checked="true"
-            android:paddingLeft="16dp"
-            android:paddingTop="8dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="8dp"
-            android:textColor="@drawable/selector_switch_button_color"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_2"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_2" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/sb_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="64dp"
-            android:checked="true"
-            android:paddingLeft="16dp"
-            android:paddingTop="8dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="8dp"
-            android:textColor="@drawable/selector_switch_button_color"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_3"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_3" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/sb_4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginRight="64dp"
-            android:checked="true"
-            android:paddingLeft="16dp"
-            android:paddingTop="8dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="8dp"
-            android:textColor="@drawable/selector_switch_button_color"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@id/tv_4"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tv_4" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_repeat_at_fixed_rate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/line_repeat">
@@ -277,6 +142,7 @@
             android:text="周期"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp"
+            android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/tv_time"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/tv_switch"
@@ -290,46 +156,23 @@
             android:text="工作时间"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tv_command"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/tv_period"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_switch_hint"
+            android:id="@+id/tv_command"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="设置的开关，单控模式"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toStartOf="@+id/tv_period"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_time" />
-
-        <TextView
-            android:id="@+id/tv_period_hint"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="每执行一次开启的周期"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toStartOf="@+id/tv_time"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/tv_switch"
-            app:layout_constraintTop_toBottomOf="@id/tv_time" />
-
-        <TextView
-            android:id="@+id/tv_time_hint"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="每次持续时间"
-            android:textSize="12sp"
+            android:text="指令"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/tv_period"
-            app:layout_constraintTop_toBottomOf="@id/tv_time" />
+            app:layout_constraintStart_toEndOf="@+id/tv_time"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_hint"
@@ -339,9 +182,10 @@
             android:padding="4dp"
             android:text="每31分钟执行一次，每次开启2分钟"
             android:textColor="@color/colorAccent"
+            android:visibility="gone"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_time_hint" />
+            app:layout_constraintTop_toBottomOf="@id/tv_switch" />
 
         <com.contrarywind.view.WheelView
             android:id="@+id/wv_switch"
@@ -368,9 +212,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/wv_command"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/wv_period"
+            app:layout_constraintTop_toBottomOf="@id/tv_hint" />
+
+        <com.contrarywind.view.WheelView
+            android:id="@+id/wv_command"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/wv_time"
             app:layout_constraintTop_toBottomOf="@id/tv_hint" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

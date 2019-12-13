@@ -60,6 +60,9 @@ public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
                     .setText(R.id.tv_2, TextUtils.isEmpty(names.get(2)) ? "2. 开关" : "2. " + names.get(2))
                     .setText(R.id.tv_3, TextUtils.isEmpty(names.get(3)) ? "3. 开关" : "3. " + names.get(3))
                     .setText(R.id.tv_4, TextUtils.isEmpty(names.get(4)) ? "4. 开关" : "4. " + names.get(4));
+        } else {
+            String name = "dc1_" + bean.getId().substring(bean.getId().length() - 4);
+            holder.setText(R.id.tv_name, name);
         }
 
         String status = bean.getStatus();
@@ -73,10 +76,12 @@ public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
         sb3.setOnCheckedChangeListener(null);
         sb4.setOnCheckedChangeListener(null);
 
-        sb1.setChecked(status.charAt(0) == '1');
-        sb2.setChecked(status.charAt(1) == '1');
-        sb3.setChecked(status.charAt(2) == '1');
-        sb4.setChecked(status.charAt(3) == '1');
+        if (!TextUtils.isEmpty(status) && status.length() == 4) {
+            sb1.setChecked(status.charAt(0) == '1');
+            sb2.setChecked(status.charAt(1) == '1');
+            sb3.setChecked(status.charAt(2) == '1');
+            sb4.setChecked(status.charAt(3) == '1');
+        }
 
         CompoundButton.OnCheckedChangeListener changeListener = (buttonView, isChecked) -> {
             int pos;

@@ -104,7 +104,7 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
                 new IHttpCallback<List<PlanBean>>() {
                     @Override
                     public void onSuccess(@Nullable List<PlanBean> data) {
-                        mAdapter.setData(data);
+                        mAdapter.setDc1Bean(dc1Bean).setData(data);
                         srl.setRefreshing(false);
                     }
 
@@ -121,7 +121,7 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
             EventBus.getDefault().post(new Event().setCode(Event.CODE_JUMP_TO_ADD_PLAN).setData(dc1Bean));
         });
         srl.setOnRefreshListener(() -> {
-            mAdapter.setData(null);
+            mAdapter.setDc1Bean(null).setData(null);
             refresh();
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -135,11 +135,6 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(Event event) {
         switch (event.getCode()) {
-            case Event.CODE_PLAN_LIST: {
-                srl.setRefreshing(false);
-                mAdapter.setData((List<PlanBean>) event.getData());
-                break;
-            }
             case Event.CODE_ADD_PLAN: {
                 List<PlanBean> data = mAdapter.getData();
                 data.add((PlanBean) event.getData());
@@ -185,18 +180,9 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
             mAdapter.getData().clear();
         }
         this.dc1Bean = dc1Bean;
+        if (mAdapter != null) {
+            mAdapter.setDc1Bean(dc1Bean);
+        }
         return this;
     }
-
-    /**
-     * 延迟重置刷新状态
-     */
-    private Runnable delayRefresh = new Runnable() {
-        @Override
-        public void run() {
-            if (srl != null && srl.isRefreshing()) {
-                srl.setRefreshing(false);
-            }
-        }
-    };
 }

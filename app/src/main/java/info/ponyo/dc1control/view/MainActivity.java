@@ -14,9 +14,9 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
+import info.ponyo.dc1control.BuildConfig;
 import info.ponyo.dc1control.R;
 import info.ponyo.dc1control.bean.Dc1Bean;
-import info.ponyo.dc1control.network.socket.Connection;
 import info.ponyo.dc1control.util.Event;
 import info.ponyo.dc1control.view.device.DeviceFragment;
 import info.ponyo.dc1control.view.plan.PlanFragment;
@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         EventBus.getDefault().register(this);
+        getSupportActionBar().setSubtitle("设备列表");
+        getSupportActionBar().setTitle(getString(R.string.app_name) + " " + BuildConfig.VERSION_NAME);
 
         if (savedInstanceState != null) {
             deviceFragment = (DeviceFragment) getSupportFragmentManager().getFragment(savedInstanceState, DeviceFragment.class.getSimpleName());
@@ -96,18 +98,20 @@ public class MainActivity extends AppCompatActivity {
         switch (fragment.getClass().getSimpleName()) {
             case "PlanFragment": {
                 getFragmentTransaction()
-                        .setCustomAnimations(R.anim.fragment_left_enter,R.anim.fragment_right_exit)
+                        .setCustomAnimations(R.anim.fragment_left_enter, R.anim.fragment_right_exit)
                         .show(deviceFragment)
                         .hide(planFragment)
                         .commit();
+                getSupportActionBar().setSubtitle("设备列表");
                 break;
             }
             case "AddPlanFragment": {
                 getFragmentTransaction()
-                        .setCustomAnimations(R.anim.fragment_left_enter,R.anim.fragment_right_exit)
+                        .setCustomAnimations(R.anim.fragment_left_enter, R.anim.fragment_right_exit)
                         .show(planFragment)
                         .hide(addPlanFragment)
                         .commit();
+                getSupportActionBar().setSubtitle("计划列表");
                 break;
             }
             default: {
@@ -133,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 transaction.commit();
                 fragmentStack.add(planFragment);
                 planFragment.setDc1Bean((Dc1Bean) event.getData());
+                getSupportActionBar().setSubtitle("计划列表");
                 break;
             }
             case Event.CODE_JUMP_TO_ADD_PLAN: {
@@ -148,28 +153,13 @@ public class MainActivity extends AppCompatActivity {
                 transaction.commit();
                 fragmentStack.add(addPlanFragment);
                 addPlanFragment.setDc1Bean((Dc1Bean) event.getData());
+                getSupportActionBar().setSubtitle("添加计划");
                 break;
             }
             case Event.CODE_CONNECT_ERROR: {
-                findViewById(R.id.container).postDelayed(() -> {
-                    if (Connection.getInstance().isActive()) {
-                        return;
-                    }
-                    showServerUnconnectDialog();
-                }, 3000);
                 break;
             }
             case Event.CODE_MESSAGE: {
-                new AlertDialog.Builder(this)
-                        .setTitle("提示")
-                        .setIcon(R.drawable.ic_warning)
-                        .setMessage((String) event.getData())
-                        .setPositiveButton("确定", (dialog, which) -> {
-                            dialog.dismiss();
-                        })
-                        .setPositiveButtonIcon(getResources().getDrawable(R.drawable.ic_confirm))
-                        .create()
-                        .show();
                 break;
             }
             default: {

@@ -13,7 +13,6 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -27,6 +26,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,26 +61,13 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
     public TextView tvTriggerTimeLabel;
     @BindView(R.id.tv_trigger_time)
     public TextView tvTriggerTime;
-    @BindView(R.id.tv_1)
-    public TextView tv1;
-    @BindView(R.id.tv_2)
-    public TextView tv2;
-    @BindView(R.id.tv_3)
-    public TextView tv3;
-    @BindView(R.id.tv_4)
-    public TextView tv4;
-    @BindView(R.id.sb_1)
-    public SwitchCompat sb1;
-    @BindView(R.id.sb_2)
-    public SwitchCompat sb2;
-    @BindView(R.id.sb_3)
-    public SwitchCompat sb3;
-    @BindView(R.id.sb_4)
-    public SwitchCompat sb4;
+
     @BindView(R.id.fab_add)
     public FloatingActionButton fab;
+
     @BindView(R.id.rv_weekday)
     public RecyclerView recyclerView;
+
     @BindView(R.id.cb_repeat_once)
     public CheckBox cbRepeatOnce;
     @BindView(R.id.cb_repeat_everyday)
@@ -90,6 +77,12 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
     @BindView(R.id.cb_repeat_customize)
     public CheckBox cbRepeatCustomize;
 
+    @BindView(R.id.tv_period)
+    public TextView tvPeriod;
+    @BindView(R.id.tv_time)
+    public TextView tvTime;
+    @BindView(R.id.tv_command)
+    public TextView tvCommand;
     @BindView(R.id.tv_hint)
     public TextView tvHint;
 
@@ -99,10 +92,8 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
     public WheelView wvPeriod;
     @BindView(R.id.wv_time)
     public WheelView wvTime;
-    @BindView(R.id.cl_repeat_at_fixed_rate)
-    public ConstraintLayout clRepeatAtFixedRate;
-    @BindView(R.id.cl_multi_switch)
-    public ConstraintLayout clMultiSwitch;
+    @BindView(R.id.wv_command)
+    public WheelView wvCommand;
 
     private String mTriggerTime;
     private String mRepeat;
@@ -126,9 +117,8 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
     @Override
     public void onStart() {
         super.onStart();
-        clMultiSwitch.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.GONE);
-        clRepeatAtFixedRate.setVisibility(View.GONE);
+        setCommandStateVisible(true);
 
         tvTriggerTimeLabel.setOnClickListener(this);
         tvTriggerTime.setOnClickListener(this);
@@ -139,39 +129,17 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
         fab.setOnClickListener(this::onClick);
         cbRepeatEveryday.setChecked(true);
 
-        initNames();
-
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
         mAdapter = new WeekdayAdapter();
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
 
-        List<String> switchIndexList;
-        ArrayList<String> names = dc1Bean.getNames();
-        if (names != null && names.size() == 5) {
-            switchIndexList = new ArrayList<>(4);
-            for (int i = 1; i < names.size(); i++) {
-                String str = names.get(i);
-                if (TextUtils.isEmpty(str)) {
-                    if (i == 1) {
-                        switchIndexList.add("总开关");
-                    } else {
-                        switchIndexList.add("开关" + (i - 1));
-                    }
-                } else {
-                    switchIndexList.add(str);
-                }
-            }
-        } else {
-            switchIndexList = new ArrayList<>();
-            switchIndexList.add("总开关");
-            switchIndexList.add("开关1");
-            switchIndexList.add("开关2");
-            switchIndexList.add("开关3");
+        if (dc1Bean == null) {
+            Toast.makeText(AddPlanFragment.this.getContext(), "数据异常", Toast.LENGTH_SHORT).show();
+            return;
         }
-        StringWheelAdapter switchAdapter = new StringWheelAdapter(switchIndexList);
+
         wvSwitch.setCyclic(false);
-        wvSwitch.setAdapter(switchAdapter);
 
         AtomicInteger period = new AtomicInteger();
         AtomicInteger time = new AtomicInteger();
@@ -193,18 +161,44 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
             time.set(index + 1);
             tvHint.setText(String.format("每%d分钟执行一次，每次开启%d分钟(立刻执行，触发时间无效)", period.get(), time.get()));
         });
+
+        StringWheelAdapter commandAdapter = new StringWheelAdapter(Arrays.asList("关闭", "开启"));
+        wvCommand.setAdapter(commandAdapter);
+        wvCommand.setCyclic(false);
+        wvCommand.setCurrentItem(0);
+
+        initNames();
     }
 
     private void initNames() {
         if (dc1Bean != null) {
             //开关名称及状态
+            List<String> switchIndexList;
             ArrayList<String> names = dc1Bean.getNames();
             if (names != null && names.size() == 5) {
-                tv1.setText(TextUtils.isEmpty(names.get(1)) ? "1. 总开关" : "1. " + names.get(1));
-                tv2.setText(TextUtils.isEmpty(names.get(2)) ? "2. 开关" : "2. " + names.get(2));
-                tv3.setText(TextUtils.isEmpty(names.get(3)) ? "3. 开关" : "3. " + names.get(3));
-                tv4.setText(TextUtils.isEmpty(names.get(4)) ? "4. 开关" : "4. " + names.get(4));
+                switchIndexList = new ArrayList<>(4);
+                for (int i = 1; i < names.size(); i++) {
+                    String str = names.get(i);
+                    if (TextUtils.isEmpty(str)) {
+                        if (i == 1) {
+                            switchIndexList.add("总开关");
+                        } else {
+                            switchIndexList.add("分控" + (i - 1));
+                        }
+                    } else {
+                        switchIndexList.add(str);
+                    }
+                }
+            } else {
+                switchIndexList = new ArrayList<>();
+                switchIndexList.add("总开关");
+                switchIndexList.add("分控1");
+                switchIndexList.add("分控2");
+                switchIndexList.add("分控3");
             }
+            StringWheelAdapter switchAdapter = new StringWheelAdapter(switchIndexList);
+            wvSwitch.setCyclic(false);
+            wvSwitch.setAdapter(switchAdapter);
         }
     }
 
@@ -254,9 +248,8 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 cbRepeatAtFixedRate.setChecked(false);
                 cbRepeatCustomize.setChecked(false);
                 mAdapter.clearState();
-                clMultiSwitch.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
-                clRepeatAtFixedRate.setVisibility(View.GONE);
+                setCommandStateVisible(true);
                 break;
             }
             case R.id.cb_repeat_everyday: {
@@ -265,9 +258,8 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 cbRepeatAtFixedRate.setChecked(false);
                 cbRepeatCustomize.setChecked(false);
                 mAdapter.clearState();
-                clMultiSwitch.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
-                clRepeatAtFixedRate.setVisibility(View.GONE);
+                setCommandStateVisible(true);
                 break;
             }
             case R.id.cb_repeat_at_fixed_rate: {
@@ -276,9 +268,8 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 cbRepeatAtFixedRate.setChecked(true);
                 cbRepeatCustomize.setChecked(false);
                 mAdapter.clearState();
-                clMultiSwitch.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                clRepeatAtFixedRate.setVisibility(View.VISIBLE);
+                setCommandStateVisible(false);
                 break;
             }
             case R.id.cb_repeat_customize: {
@@ -286,15 +277,25 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 cbRepeatEveryday.setChecked(false);
                 cbRepeatAtFixedRate.setChecked(false);
                 cbRepeatCustomize.setChecked(true);
-                clMultiSwitch.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
-                clRepeatAtFixedRate.setVisibility(View.GONE);
+                setCommandStateVisible(true);
                 break;
             }
             default: {
                 break;
             }
         }
+    }
+
+    private void setCommandStateVisible(boolean b) {
+        int visible = b ? View.VISIBLE : View.GONE;
+        int invisible = b ? View.GONE : View.VISIBLE;
+        tvCommand.setVisibility(visible);
+        wvCommand.setVisibility(visible);
+        tvPeriod.setVisibility(invisible);
+        wvPeriod.setVisibility(invisible);
+        tvTime.setVisibility(invisible);
+        wvTime.setVisibility(invisible);
     }
 
     private void save() {
@@ -309,20 +310,15 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
             return;
         }
 
-        String sb1Command = this.sb1.isChecked() ? "1" : "0";
-        String sb2Command = this.sb2.isChecked() ? "1" : "0";
-        String sb3Command = this.sb3.isChecked() ? "1" : "0";
-        String sb4Command = this.sb4.isChecked() ? "1" : "0";
-
         PlanBean planBean = new PlanBean()
                 .setId(UUID.randomUUID().toString())
                 .setEnable(true)
                 .setTriggerTime(mTriggerTime)
-                .setStatus(sb1Command + sb2Command + sb3Command + sb4Command)
+                .setStatus("0000")
                 .setDeviceName(dc1Bean.getNames() == null || dc1Bean.getNames().isEmpty() ? "" : dc1Bean.getNames().get(0))
                 .setRepeat(mRepeat)
                 .setDeviceId(dc1Bean.getId())
-                .setCommand("1")
+                .setCommand(wvCommand.getCurrentItem() + "")
                 .setSwitchIndex(wvSwitch.getCurrentItem() + "")
                 .setRepeatData(String.format("%d,%d", wvPeriod.getCurrentItem() + 1, wvTime.getCurrentItem() + 1));
 
@@ -335,10 +331,6 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
                 tvTriggerTime.setText("");
                 mRepeat = null;
                 cbRepeatEveryday.performClick();
-                sb1.setChecked(true);
-                sb2.setChecked(true);
-                sb3.setChecked(true);
-                sb4.setChecked(true);
 
                 getActivity().onBackPressed();
             }

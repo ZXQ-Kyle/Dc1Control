@@ -69,6 +69,7 @@ public class SettingDialog extends AppCompatDialogFragment {
         WindowManager.LayoutParams layoutParams = window.getAttributes();
         layoutParams.dimAmount = 0.0f;
         window.setAttributes(layoutParams);
+        window.setWindowAnimations(R.style.dialog);
     }
 
 //    @Override

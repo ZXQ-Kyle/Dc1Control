@@ -1,6 +1,8 @@
 package info.ponyo.dc1control.view.device;
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -121,9 +123,13 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
                         setRefresh();
                     })
                     .show(getActivity().getSupportFragmentManager(), "SettingDialog");
-        } else {
+        } else if (item.getItemId() == R.id.menu_feedback) {
             FeedbackAgent agent = new FeedbackAgent(getContext());
             agent.startDefaultThreadActivity();
+        } else {
+            Uri uri = Uri.parse("https://github.com/ZXQ-Kyle/N1Script");
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
         }
         return true;
     }

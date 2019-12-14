@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/menu_info"
+        android:icon="@drawable/ic_info"
+        android:title="说明"
+        android:iconTint="@color/white"
+        app:showAsAction="withText|always" />
+
+    <item
         android:id="@+id/menu_feedback"
         android:icon="@drawable/ic_feedback"
         android:title="@string/feedback"

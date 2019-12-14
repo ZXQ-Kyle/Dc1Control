@@ -16,4 +16,9 @@
         <item name="android:background">@color/textGray</item>
     </style>
 
+    <style name="dialog">
+        <item name="android:windowEnterAnimation">@anim/fragment_right_enter</item>
+        <item name="android:windowExitAnimation">@anim/fragment_right_exit</item>
+    </style>
+
 </resources>

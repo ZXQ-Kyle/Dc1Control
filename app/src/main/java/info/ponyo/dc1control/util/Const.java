@@ -19,4 +19,5 @@ public class Const {
      * 加密token
      */
     public static final String KEY_TOKEN = "02";
+    public static final String KEY_HISTORY = "05";
 }

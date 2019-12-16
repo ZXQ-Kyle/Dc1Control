@@ -22,6 +22,7 @@ import info.ponyo.dc1control.util.Event;
 import info.ponyo.dc1control.view.device.DeviceFragment;
 import info.ponyo.dc1control.view.plan.PlanFragment;
 import info.ponyo.dc1control.view.plan.add.AddPlanFragment;
+import info.ponyo.dc1control.view.plan.countdown.CountDownFragment;
 
 /**
  * @author zxq
@@ -117,6 +118,15 @@ public class MainActivity extends AppCompatActivity {
                 getSupportActionBar().setSubtitle("计划列表");
                 break;
             }
+            case "CountDownFragment": {
+                getFragmentTransaction()
+                        .setCustomAnimations(R.anim.fragment_left_enter, R.anim.fragment_right_exit)
+                        .show(deviceFragment)
+                        .remove(fragment)
+                        .commit();
+                getSupportActionBar().setSubtitle("设备列表");
+                break;
+            }
             default: {
                 super.onBackPressed();
                 break;
@@ -141,6 +151,16 @@ public class MainActivity extends AppCompatActivity {
                 fragmentStack.add(planFragment);
                 planFragment.setDc1Bean((Dc1Bean) event.getData());
                 getSupportActionBar().setSubtitle("计划列表");
+                break;
+            }
+            case Event.CODE_DEVICE_JUMP_TO_COUNT_DOWN: {
+                CountDownFragment countDownFragment = CountDownFragment.newInstance((Dc1Bean) event.getData());
+                FragmentTransaction transaction = getFragmentTransaction();
+                transaction.setCustomAnimations(R.anim.fragment_right_enter, R.anim.fragment_left_exit, R.anim.fragment_left_enter, R.anim.fragment_left_exit).hide(deviceFragment)
+                        .add(R.id.container, countDownFragment, CountDownFragment.class.getSimpleName())
+                        .commit();
+                fragmentStack.add(countDownFragment);
+                getSupportActionBar().setSubtitle("关闭倒计时");
                 break;
             }
             case Event.CODE_JUMP_TO_ADD_PLAN: {

@@ -180,6 +180,8 @@ public class DeviceFragment extends Fragment implements OnRecyclerViewItemClickL
             showResetPowerDialog(dc1Bean);
         } else if (viewId == R.id.iv_plan) {
             EventBus.getDefault().post(new Event().setCode(Event.CODE_JUMP_TO_PLAN).setData(dc1Bean));
+        } else if (viewId == R.id.iv_count_down) {
+            EventBus.getDefault().post(new Event().setCode(Event.CODE_DEVICE_JUMP_TO_COUNT_DOWN).setData(dc1Bean));
         } else {
             View view = View.inflate(getContext(), R.layout.view_edit_name, null);
             EditText etSwitch = view.findViewById(R.id.et_switch);

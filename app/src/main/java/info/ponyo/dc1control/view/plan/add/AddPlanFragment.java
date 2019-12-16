@@ -139,8 +139,6 @@ public class AddPlanFragment extends Fragment implements TimePickerDialog.OnTime
             return;
         }
 
-        wvSwitch.setCyclic(false);
-
         AtomicInteger period = new AtomicInteger();
         AtomicInteger time = new AtomicInteger();
         List<String> periodList = Stream.rangeClosed(1, 60).map(Object::toString).toList();

@@ -41,6 +41,7 @@ public class DeviceAdapter extends CommonAdapter<Dc1Bean> {
                         "电压:%dV  电流:%dmA  功率:%dW", bean.getV(), bean.getI(), bean.getP()))
                 .setOnItemChildClickListener(R.id.iv_edit)
                 .setOnItemChildClickListener(R.id.iv_plan)
+                .setOnItemChildClickListener(R.id.iv_count_down)
                 .setOnItemChildClickListener(R.id.tv_power_info);
         //用电量显示
         if (bean.getPowerStartTime() == 0) {

@@ -73,12 +73,21 @@
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/iv_plan"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/iv_count_down"
             app:layout_constraintTop_toBottomOf="@id/tv_4"
             app:srcCompat="@drawable/ic_time" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/iv_count_down"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toRightOf="@id/iv_plan"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_4"
+            app:srcCompat="@drawable/ic_hourglass" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_name"

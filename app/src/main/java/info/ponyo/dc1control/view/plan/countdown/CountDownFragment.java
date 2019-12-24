@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -196,7 +195,9 @@ public class CountDownFragment extends Fragment implements View.OnClickListener 
         if (charAt == '0') {
             //当前关闭的话就开启
             StringBuilder sb = new StringBuilder(status).replace(index, index + 1, "1");
-            System.out.println(sb.toString());
+            if (index != 0) {
+                sb = sb.replace(0, 1, "1");
+            }
             ConnectApi.switchDc1Status(dc1Bean.getId(), sb.toString());
         }
     }

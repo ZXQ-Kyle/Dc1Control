@@ -18,6 +18,7 @@ import androidx.appcompat.widget.AppCompatEditText;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.annimon.stream.Stream;
 import com.annimon.stream.function.Consumer;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -118,7 +119,15 @@ public class SettingDialog extends AppCompatDialogFragment {
             if (TextUtils.isEmpty(token)) {
                 token = "dc1server";
             }
-            String md5 = MD5.getMD5(token);
+            String md5;
+            if (token.length() == 32) {
+                md5 = token;
+            } else {
+                md5 = MD5.getMD5(token);
+                if (TextUtils.isEmpty(md5)) {
+                    md5 = token;
+                }
+            }
             saveHistory(host, tcpPort, httpPort, md5);
             saveAndReset(host, tcpPort, httpPort, md5);
         });
@@ -165,15 +174,25 @@ public class SettingDialog extends AppCompatDialogFragment {
     }
 
     private void saveHistory(String host, String tcpPort, String httpPort, String token) {
+        List<HostBean> data = mAdapter.getData();
+        if (data == null) {
+            data = new ArrayList<>();
+        }
+        boolean anyMatch = Stream.of(data)
+                .anyMatch(value -> TextUtils.equals(value.getHost(), host)
+                        && TextUtils.equals(value.getSocketPort(), tcpPort)
+                        && TextUtils.equals(value.getHttpPort(), httpPort)
+                        && TextUtils.equals(value.getToken(), token)
+                );
+        if (anyMatch) {
+            return;
+        }
         HostBean hostBean = new HostBean()
                 .setHost(host)
                 .setSocketPort(tcpPort)
                 .setHttpPort(httpPort)
                 .setToken(token);
-        List<HostBean> data = mAdapter.getData();
-        if (data == null) {
-            data = new ArrayList<>();
-        }
+
         data.add(0, hostBean);
         if (data.size() > 5) {
             data.remove(data.size() - 1);

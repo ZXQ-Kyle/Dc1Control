@@ -46,4 +46,36 @@ public class HostBean {
         this.token = token;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        HostBean hostBean = (HostBean) o;
+
+        if (host != null ? !host.equals(hostBean.host) : hostBean.host != null) {
+            return false;
+        }
+        if (socketPort != null ? !socketPort.equals(hostBean.socketPort) : hostBean.socketPort != null) {
+            return false;
+        }
+        if (httpPort != null ? !httpPort.equals(hostBean.httpPort) : hostBean.httpPort != null) {
+            return false;
+        }
+        return token != null ? token.equals(hostBean.token) : hostBean.token == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = host != null ? host.hashCode() : 0;
+        result = 31 * result + (socketPort != null ? socketPort.hashCode() : 0);
+        result = 31 * result + (httpPort != null ? httpPort.hashCode() : 0);
+        result = 31 * result + (token != null ? token.hashCode() : 0);
+        return result;
+    }
 }

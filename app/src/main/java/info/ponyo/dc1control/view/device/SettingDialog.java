@@ -73,12 +73,6 @@ public class SettingDialog extends AppCompatDialogFragment {
         window.setWindowAnimations(R.style.dialog);
     }
 
-//    @Override
-//    public void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-//    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -96,12 +90,6 @@ public class SettingDialog extends AppCompatDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-//        Dialog dialog = getDialog();
-//        if (dialog != null) {
-//            DisplayMetrics dm = new DisplayMetrics();
-//            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
-//            dialog.getWindow().setLayout((int) (dm.widthPixels * 0.85), ViewGroup.LayoutParams.WRAP_CONTENT);
-//        }
         mEtHost.setText(SpManager.getString(Const.KEY_HOST, "192.168.1.1"));
         mTcpPort.setText(SpManager.getString(Const.KEY_TCP_PORT, "8800"));
         mHttpPort.setText(SpManager.getString(Const.KEY_HTTP_PORT, "8880"));
@@ -178,20 +166,14 @@ public class SettingDialog extends AppCompatDialogFragment {
         if (data == null) {
             data = new ArrayList<>();
         }
-        boolean anyMatch = Stream.of(data)
-                .anyMatch(value -> TextUtils.equals(value.getHost(), host)
-                        && TextUtils.equals(value.getSocketPort(), tcpPort)
-                        && TextUtils.equals(value.getHttpPort(), httpPort)
-                        && TextUtils.equals(value.getToken(), token)
-                );
-        if (anyMatch) {
-            return;
-        }
         HostBean hostBean = new HostBean()
                 .setHost(host)
                 .setSocketPort(tcpPort)
                 .setHttpPort(httpPort)
                 .setToken(token);
+        if (Stream.of(data).anyMatch(hostBean::equals)) {
+            return;
+        }
 
         data.add(0, hostBean);
         if (data.size() > 5) {

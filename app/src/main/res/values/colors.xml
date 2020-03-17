@@ -14,4 +14,11 @@
     <color name="darkGray">#43424242</color>
     <color name="black">#000000</color>
     <color name="white">#fff</color>
+
+    <color name="open">#FF6464</color>
+    <color name="openTrans">#1AFF6464</color>
+    <color name="close">#68B483</color>
+    <color name="closeTrans">#1A68B483</color>
+
+
 </resources>

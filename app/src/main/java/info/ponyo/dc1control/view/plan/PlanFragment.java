@@ -70,12 +70,12 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
         recyclerView = view.findViewById(R.id.rv);
         srl = view.findViewById(R.id.srl);
         fabAdd = view.findViewById(R.id.fab_add);
+        initView();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        initView();
         EventBus.getDefault().register(this);
     }
 
@@ -125,7 +125,8 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
             refresh();
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayout.VERTICAL));
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(getContext(), LinearLayout.VERTICAL);
+        recyclerView.addItemDecoration(itemDecoration);
         mAdapter = new PlanAdapter();
         recyclerView.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(this);
@@ -177,12 +178,10 @@ public class PlanFragment extends Fragment implements OnRecyclerViewItemClickLis
 
     public PlanFragment setDc1Bean(Dc1Bean dc1Bean) {
         if (this.dc1Bean != dc1Bean && mAdapter != null && mAdapter.getData() != null) {
-            mAdapter.getData().clear();
+            mAdapter.setDc1Bean(dc1Bean);
+            mAdapter.setData(null);
         }
         this.dc1Bean = dc1Bean;
-        if (mAdapter != null) {
-            mAdapter.setDc1Bean(dc1Bean);
-        }
         return this;
     }
 }

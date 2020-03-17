@@ -1,10 +1,8 @@
 package info.ponyo.dc1control.view.plan;
 
-import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.core.content.ContextCompat;
 
 import info.ponyo.dc1control.R;
 import info.ponyo.dc1control.base.CommonAdapter;
@@ -12,7 +10,6 @@ import info.ponyo.dc1control.base.CommonViewHolder;
 import info.ponyo.dc1control.bean.Dc1Bean;
 import info.ponyo.dc1control.bean.PlanBean;
 import info.ponyo.dc1control.network.socket.ConnectApi;
-import info.ponyo.dc1control.util.SpanUtil;
 
 /**
  * @author zxq
@@ -53,20 +50,22 @@ public class PlanAdapter extends CommonAdapter<PlanBean> {
                 break;
             }
             default: {
-                switchName = "未知";
+                switchName = "未知开关";
                 break;
             }
         }
 
-        String command = TextUtils.equals(bean.getCommand(), "0") ? "关" : "开";
-        SpannableStringBuilder stringBuilder = SpanUtil.build()
-                .append(switchName)
-                .append(" : ")
-                .append(command).setForegroundColor(ContextCompat.getColor(holder.getContext(), R.color.colorPrimary))
-                .create();
-
-        holder.setText(R.id.tv_trigger_time, "触发时间  " + bean.getTriggerTime())
-                .setText(R.id.tv_trigger_status, stringBuilder)
+        boolean isClose = TextUtils.equals(bean.getCommand(), "0");
+        if (switchName.length() > 2) {
+            switchName = new StringBuilder(switchName).insert(2, "\n").toString();
+        }
+        holder
+                .setTextColorByResId(R.id.tv_name, isClose ? R.color.close : R.color.open)
+                .setBackgroundResource(R.id.tv_name, isClose ? R.color.closeTrans : R.color.openTrans)
+                .setText(R.id.tv_name, switchName)
+                .setText(R.id.tv_trigger_time, "触发时间  " + bean.getTriggerTime())
+                .setText(R.id.tv_trigger_status, isClose ? "关" : "开")
+                .setTextColorByResId(R.id.tv_trigger_status, isClose ? R.color.close : R.color.open)
                 .setText(R.id.tv_repeat, "  |  周期：" + bean.getRepeat_2showstr())
                 .setChecked(R.id.sw, bean.isEnable())
                 .setOnItemClickListener();
